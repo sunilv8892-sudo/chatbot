@@ -10,9 +10,13 @@ document.addEventListener("DOMContentLoaded", () => {
   chatBox.style.display = "none";
 
   // OPEN CHAT
-  chatToggle.addEventListener("click", () => {
+ chatToggle.addEventListener("click", () => {
+  if (chatBox.style.display === "none" || chatBox.style.display === "") {
     chatBox.style.display = "flex";
-  });
+  } else {
+    chatBox.style.display = "none";
+  }
+});
 
   // CLOSE CHAT
   closeChat.addEventListener("click", () => {
@@ -59,3 +63,4 @@ document.addEventListener("DOMContentLoaded", () => {
     return div;
   }
 });
+
