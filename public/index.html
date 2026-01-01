@@ -11,31 +11,77 @@
 </head>
 <body>
 
-<h1>MIT First Grade College</h1>
-<p>Welcome to the official website.</p>
-
-<!-- Floating chat button -->
-<div id="chat-toggle">
-  🤖 <span>Ask AI</span>
+<!-- Top Bar -->
+<div class="top-bar">
+  <span>📞 0821 233 1722</span>
+  <span>📍 Mysuru, Karnataka</span>
 </div>
 
-<!-- Chat window -->
-<div id="chatbox" class="hidden">
+<!-- Header -->
+<header class="main-header">
+  <div class="logo">MIT First Grade College</div>
+  <nav>
+    <a href="#">Home</a>
+    <a href="#">About Us</a>
+    <a href="#">Admissions</a>
+    <a href="#">Courses</a>
+    <a href="#">Facilities</a>
+    <a href="#">Contact</a>
+  </nav>
+</header>
+
+<!-- Hero -->
+<section class="hero-section">
+  <div class="hero-text">
+    <h1>MIT First Grade College</h1>
+    <p>Affiliated to University of Mysore | NAAC Accredited</p>
+    <button>Apply for Admission</button>
+  </div>
+</section>
+
+<!-- Content -->
+<section class="info-section">
+  <h2>Welcome to MIT First Grade College</h2>
+  <p>
+    MIT First Grade College, Mysuru, is committed to academic excellence and
+    holistic development of students in commerce, management, and computer
+    applications.
+  </p>
+</section>
+
+<section class="info-cards">
+  <div class="card">📘 UG & PG Programs</div>
+  <div class="card">🏫 Modern Infrastructure</div>
+  <div class="card">🎓 Placement Assistance</div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+  <p>
+    © MIT First Grade College, Mysuru <br>
+    Mananthavadi Road, Vidyaranyapura, Mysuru – 570008
+  </p>
+</footer>
+
+<!-- Chatbot -->
+<div id="chat-toggle">🤖 <span>Ask AI</span></div>
+
+<div id="chatbox">
   <div id="chat-header">
     MIT FGC Chatbot
     <span id="close-chat">✖</span>
   </div>
-
   <div id="messages"></div>
-
   <div id="chat-input">
-    <input id="input" placeholder="Ask about college..." />
+    <input id="input" placeholder="Ask about admissions, fees, courses..." />
     <button id="send-btn">Send</button>
   </div>
 </div>
 
 <script src="script.js"></script>
 </body>
+
 </html>
+
 
 
