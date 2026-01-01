@@ -1,202 +1,177 @@
-import fetch from "node-fetch";
-
-export default async function handler(req, res) {
+export default function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ reply: "Method not allowed" });
   }
 
   const q = req.body.message.toLowerCase();
 
-  /* =========================
+  /* =====================
      GREETINGS
-  ========================= */
-  if (["hi", "hello", "hey"].includes(q)) {
+  ===================== */
+  if (/(hi|hello|hey|good morning|good evening)/.test(q)) {
     return res.json({
       reply:
-        "Hello 👋 I’m the MIT FGC virtual assistant. You can ask me about admissions, fees, courses, exams, hostel, or placements."
+        "Hello 👋 Welcome to MIT First Grade College. I can help you with admissions, courses, eligibility, faculty, facilities, and general information."
     });
   }
 
-  /* =========================
+  /* =====================
+     ABOUT COLLEGE / TRUST
+  ===================== */
+  if (q.includes("about") || q.includes("trust")) {
+    return res.json({
+      reply:
+        "MIT First Grade College is managed by Maharaja Education Trust, founded by eminent academicians with extensive teaching and research experience. The Trust manages multiple educational institutions including schools, PU colleges, degree colleges, engineering, nursing, pharmacy, agriculture, and management institutions."
+    });
+  }
+
+  /* =====================
+     COURSES OFFERED
+  ===================== */
+  if (q.includes("course") || q.includes("program")) {
+    return res.json({
+      reply:
+        "MIT First Grade College offers undergraduate programs: Bachelor of Computer Applications (BCA), Bachelor of Commerce (B.Com), and Bachelor of Business Administration (BBA)."
+    });
+  }
+
+  /* =====================
+     BCA DETAILS
+  ===================== */
+  if (q.includes("bca")) {
+    return res.json({
+      reply:
+        "BCA is a 3-year undergraduate program (6 semesters) designed to build strong foundations in computer applications, programming, problem-solving, and communication skills. It prepares students for IT careers and higher studies like MCA or M.Sc Computer Science."
+    });
+  }
+
+  if (q.includes("bca eligibility")) {
+    return res.json({
+      reply:
+        "BCA eligibility: Candidates who have completed 10+2 or PUC with Mathematics, Computer Science, Business Mathematics, or Accountancy, or a 3-year diploma after SSLC in Computer Science / Information Science or equivalent."
+    });
+  }
+
+  /* =====================
+     B.COM DETAILS
+  ===================== */
+  if (q.includes("b.com") || q.includes("bcom")) {
+    return res.json({
+      reply:
+        "B.Com is a 3-year undergraduate program focusing on commerce, accounting, taxation, finance, and management. It prepares students for careers in banking, accounting, finance, and higher education such as M.Com, MBA, CA, CS, and CWA."
+    });
+  }
+
+  /* =====================
+     BBA DETAILS
+  ===================== */
+  if (q.includes("bba")) {
+    return res.json({
+      reply:
+        "BBA is a 3-year undergraduate program designed to develop management, leadership, entrepreneurship, and business decision-making skills."
+    });
+  }
+
+  /* =====================
+     DURATION
+  ===================== */
+  if (q.includes("duration") || q.includes("how long")) {
+    return res.json({
+      reply:
+        "All undergraduate programs (BCA, BBA, B.Com) are 3 years in duration, divided into 6 semesters of 6 months each. The maximum duration allowed is 6 years as per university norms."
+    });
+  }
+
+  /* =====================
      ADMISSIONS
-  ========================= */
-  if (q.includes("course")) {
+  ===================== */
+  if (q.includes("admission") || q.includes("apply")) {
     return res.json({
       reply:
-        "MIT First Grade College offers BCA, BBA, and B.Com at the undergraduate level, and M.Com at the postgraduate level."
-    });
-  }
-
-  if (q.includes("eligibility")) {
-    return res.json({
-      reply:
-        "Eligibility depends on the course. Undergraduate programs require completion of 10+2, and postgraduate programs require a relevant bachelor’s degree."
-    });
-  }
-
-  if (q.includes("apply") || q.includes("admission process")) {
-    return res.json({
-      reply:
-        "You can apply for admission by visiting the college office or through the official website https://mitfgc.in."
-    });
-  }
-
-  if (q.includes("last date")) {
-    return res.json({
-      reply:
-        "Admission deadlines are announced by the college each academic year. Please contact the admissions office for the latest dates."
+        "Admissions at MIT First Grade College are based on merit and university guidelines. Interested students can apply by visiting the college office or through the official website."
     });
   }
 
   if (q.includes("documents")) {
     return res.json({
       reply:
-        "Required documents usually include mark cards, transfer certificate, ID proof, and passport-size photographs."
+        "Documents generally required include marks cards, transfer certificate, migration certificate (if applicable), ID proof, and passport-size photographs."
     });
   }
 
   if (q.includes("entrance")) {
     return res.json({
       reply:
-        "There is no separate entrance exam. Admissions are generally based on merit and University of Mysore guidelines."
+        "There is no separate entrance examination. Admissions are based on eligibility and academic merit."
     });
   }
 
-  /* =========================
-     FEES & SCHOLARSHIPS
-  ========================= */
-  if (q.includes("fee")) {
+  /* =====================
+     FACULTY & MANAGEMENT
+  ===================== */
+  if (q.includes("principal")) {
     return res.json({
       reply:
-        "The fee structure varies by course and follows university norms. Please contact the college office for exact fee details."
+        "The Principal of MIT First Grade College is Dr. Chandrajit Mohan, MCA, KSET, Ph.D, with over 18 years of academic experience and specialization in Computer Vision, Machine Learning, and Management Information Systems."
     });
   }
 
-  if (q.includes("scholarship")) {
+  if (q.includes("faculty") || q.includes("staff")) {
     return res.json({
       reply:
-        "Scholarships may be available as per government and institutional norms. Students can inquire at the college office for eligibility and application details."
+        "MIT First Grade College has experienced and qualified faculty members across departments, specializing in areas such as Programming, Artificial Intelligence, Machine Learning, Data Structures, Networking, Operating Systems, Accounting, and Taxation."
     });
   }
 
-  if (q.includes("installment") || q.includes("emi")) {
+  /* =====================
+     FACILITIES
+  ===================== */
+  if (q.includes("facility") || q.includes("library") || q.includes("lab")) {
     return res.json({
       reply:
-        "Fee installment options may be available depending on college policy. Please contact the administration for confirmation."
+        "The college provides facilities such as library, computer laboratories, e-resources, and academic support services to enhance student learning."
     });
   }
 
-  if (q.includes("refund")) {
+  if (q.includes("e resource") || q.includes("question paper")) {
     return res.json({
       reply:
-        "Fee refunds are subject to college and university rules. Contact the administration office for the refund policy."
+        "E-resources and previous question papers are available through the college’s official Google Drive repository for student reference."
     });
   }
 
-  /* =========================
-     ACADEMICS
-  ========================= */
-  if (q.includes("duration")) {
+  /* =====================
+     CAREERS & OUTCOMES
+  ===================== */
+  if (q.includes("career") || q.includes("job") || q.includes("placement")) {
     return res.json({
       reply:
-        "Undergraduate programs are typically 3 years long. Postgraduate programs are usually 2 years."
+        "Graduates of MIT First Grade College are prepared for careers in IT, banking, accounting, finance, management, entrepreneurship, and public/private sector organizations."
     });
   }
 
-  if (q.includes("attendance")) {
+  /* =====================
+     LOCATION & CONTACT
+  ===================== */
+  if (q.includes("location") || q.includes("address")) {
     return res.json({
       reply:
-        "Attendance is calculated as per University of Mysore regulations. Regular attendance is mandatory."
-    });
-  }
-
-  if (q.includes("grading")) {
-    return res.json({
-      reply:
-        "The grading system follows the University of Mysore evaluation guidelines."
-    });
-  }
-
-  /* =========================
-     EXAMS & RESULTS
-  ========================= */
-  if (q.includes("exam")) {
-    return res.json({
-      reply:
-        "Examinations are conducted as per the University of Mysore academic calendar."
-    });
-  }
-
-  if (q.includes("result")) {
-    return res.json({
-      reply:
-        "Exam results are published by the University of Mysore and communicated through the college."
-    });
-  }
-
-  if (q.includes("revaluation") || q.includes("re-exam")) {
-    return res.json({
-      reply:
-        "Revaluation and supplementary exams are conducted according to university rules."
-    });
-  }
-
-  /* =========================
-     CAMPUS & FACILITIES
-  ========================= */
-  if (q.includes("hostel")) {
-    return res.json({
-      reply:
-        "Hostel facilities may be available. Students should contact the college for details regarding accommodation and fees."
-    });
-  }
-
-  if (q.includes("library") || q.includes("lab")) {
-    return res.json({
-      reply:
-        "The campus includes a library, computer labs, and other academic facilities to support student learning."
-    });
-  }
-
-  /* =========================
-     PLACEMENTS & CAREERS
-  ========================= */
-  if (q.includes("placement")) {
-    return res.json({
-      reply:
-        "MIT FGC provides placement assistance and career guidance through its placement cell."
-    });
-  }
-
-  if (q.includes("internship")) {
-    return res.json({
-      reply:
-        "Internship opportunities may be available depending on the course and industry tie-ups."
-    });
-  }
-
-  /* =========================
-     CONTACT & LOCATION
-  ========================= */
-  if (q.includes("location") || q.includes("address") || q.includes("where")) {
-    return res.json({
-      reply:
-        "MIT First Grade College is located at Mananthavadi Road, Vidyaranyapura, Mysuru – 570008, Karnataka, India."
+        "MIT First Grade College is located in Mysuru, Karnataka. For exact address and directions, please visit the official website."
     });
   }
 
   if (q.includes("contact") || q.includes("phone")) {
     return res.json({
       reply:
-        "You can contact MIT First Grade College at 0821 233 1722 or visit https://mitfgc.in."
+        "For admissions and general inquiries, please contact the college office through the official MIT First Grade College website."
     });
   }
 
-  /* =========================
-     FALLBACK
-  ========================= */
+  /* =====================
+     FALLBACK (SAFE)
+  ===================== */
   return res.json({
     reply:
-      "Sorry, I don’t have that information right now. Please contact the college office or visit https://mitfgc.in."
+      "For detailed or updated information, please visit the official MIT First Grade College website or contact the college office."
   });
 }
