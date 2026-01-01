@@ -56,27 +56,30 @@ Office Hours: Monday to Saturday, 9:30 AM – 4:30 PM
 `
   };
 
-  /* =====================
-     INTENT DETECTION
-  ===================== */
+let context = "";
 
-  let context = "";
+if (has(["principal", "head"])) {
+  context = knowledge.principal;
+}
+else if (has(["faculty", "teacher", "staff", "experience", "experienced", "quality"])) {
+  context = knowledge.faculty;
+}
+else if (has(["department", "stream"])) {
+  context = knowledge.departments;
+}
+else if (has(["bca", "computer"])) {
+  context = knowledge.bca;
+}
+else if (has(["course", "program", "degree"])) {
+  context = knowledge.courses;
+}
+else if (has(["safe", "environment", "discipline", "parent"])) {
+  context = knowledge.environment;
+}
+else if (has(["contact", "phone", "address", "office"])) {
+  context = knowledge.contact;
+}
 
-  if (has(["principal", "head of college"])) {
-    context = knowledge.principal;
-  } else if (has(["faculty", "teachers", "staff", "experience"])) {
-    context = knowledge.faculty;
-  } else if (has(["department", "departments", "streams"])) {
-    context = knowledge.departments;
-  } else if (has(["bca", "computer application"])) {
-    context = knowledge.bca;
-  } else if (has(["course", "courses", "program"])) {
-    context = knowledge.courses;
-  } else if (has(["safe", "environment", "parent", "discipline"])) {
-    context = knowledge.environment;
-  } else if (has(["contact", "phone", "address", "office"])) {
-    context = knowledge.contact;
-  }
 
   /* =====================
      NO MATCH → GUIDED AI RESPONSE
@@ -123,13 +126,20 @@ ${context}
       }
     );
 
-    const data = await geminiResponse.json();
-    const reply =
-      data.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "I can help with more details about the college.";
+   const reply =
+  data?.candidates?.[0]?.content?.parts?.[0]?.text?.trim();
+
+if (reply) {
+  return res.json({ reply });
+}
+
+// fallback ONLY if Gemini truly fails
+return res.json({ reply: context });
+
 
     return res.json({ reply });
   } catch (error) {
     return res.json({ reply: context });
   }
 }
+
