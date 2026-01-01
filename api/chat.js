@@ -99,15 +99,30 @@ export default function handler(req, res) {
     });
   }
 
-  /* =====================
-     LOCATION
-  ===================== */
-  if (q.includes("location") || q.includes("address")) {
-    return res.json({
-      reply:
-        "MIT First Grade College is located in Mysuru, Karnataka. For exact address details, please visit the official website."
-    });
-  }
+/* =====================
+   COLLEGE CONTACT DETAILS
+===================== */
+if (
+  q.includes("contact") ||
+  q.includes("phone") ||
+  q.includes("mobile") ||
+  q.includes("number") ||
+  q.includes("email") ||
+  q.includes("mail") ||
+  q.includes("office") ||
+  q.includes("admission contact") ||
+  q.includes("call")
+) {
+  return res.json({
+    reply:
+      "📞 Phone: 0821 233 1722\n" +
+      "📍 Address: Mananthavadi Road, Vidyaranyapura, Mysuru – 570008, Karnataka\n" +
+      "🌐 Website: https://mitfgc.in\n" +
+      "🕘 Office Hours: Monday to Saturday, 9:30 AM – 4:30 PM"
+  });
+}
+
+
 
   /* =====================
      FALLBACK (SAFE)
@@ -117,3 +132,4 @@ export default function handler(req, res) {
       "For detailed or updated information, please visit the official MIT First Grade College website or contact the college office."
   });
 }
+
