@@ -1,129 +1,138 @@
-export default function handler(req, res) {
+export default async function handler(req, res) {
   if (req.method !== "POST") {
     return res.status(405).json({ reply: "Method not allowed" });
   }
 
   const q = req.body.message.toLowerCase();
 
-  function has(words) {
-    return words.some(w => q.includes(w));
+  const has = (arr) => arr.some(w => q.includes(w));
+
+  /* =====================
+     KNOWLEDGE BASE
+  ===================== */
+
+  const knowledge = {
+    principal: `
+The Principal of MIT First Grade College is **Dr. Chandrajit Mohan (MCA, Ph.D)**.
+
+He has:
+• 15 years of teaching experience  
+• 3 years of industry experience  
+• 12 years of research experience  
+
+Academic contributions:
+• 25 research publications  
+• 3 textbooks authored  
+• 2 patents  
+• 2 funded projects  
+• Research guide for 5 scholars  
+
+He is also a member of the Board of Studies in Computer Science and part of the College Development Advisory Committee, University of Mysore.
+`,
+
+    faculty: `
+MIT First Grade College has **qualified and experienced faculty** across departments.
+
+🔹 **Computer Science / BCA Faculty** include:
+Dr. Chandrajit Mohan, Arvind G, Shivaprasad D L, Suhas B Raj, Yashaswini K, Bhoomika M M, Parvathi G, Yashashwini B, Renukadevi M, Abilasha C.
+
+Teaching experience ranges from **1 to 15 years**, with expertise in:
+Programming, AI, Machine Learning, Data Structures, Networks, Operating Systems, and Software Engineering.
+
+🔹 **English Department Faculty**:
+• Reena Sateesh (MA, M.Phil – 19 years)
+• Rakshith Kesari (MA, KSET – 9 years)
+• Manasa (MA – 6 months)
+
+Faculty members are student-focused, research-oriented, and academically strong.
+`,
+
+    departments: `
+🏫 **Academic Departments at MIT First Grade College**:
+• Computer Science (BCA)
+• Commerce (B.Com)
+• Management Studies (BBA)
+• English (common to all programs)
+
+Each department follows the University of Mysore curriculum and is supported by experienced faculty.
+`,
+
+    courses: `
+🎓 **Courses Offered**:
+• BCA – Bachelor of Computer Applications
+• BBA – Bachelor of Business Administration
+• B.Com – Bachelor of Commerce
+
+All programs are **3 years (6 semesters)** in duration.
+`,
+
+    bca: `
+🎓 **BCA (Bachelor of Computer Applications)** is a 3-year undergraduate program focused on:
+• Programming
+• Software development
+• Computer applications
+• Problem-solving & communication skills
+
+Career paths include IT jobs, MCA, M.Sc Computer Science, and related fields.
+`,
+
+    environment: `
+MIT First Grade College provides a **disciplined, safe, and student-friendly environment**.
+
+The college focuses on:
+• Academic excellence
+• Faculty mentoring
+• Holistic student development
+• Career readiness
+
+Parents can be assured of a supportive learning atmosphere.
+`,
+
+    contact: `
+📞 **Phone:** 0821 233 1722  
+📍 **Address:** Mananthavadi Road, Vidyaranyapura, Mysuru – 570008  
+🕘 **Office Hours:** Monday to Saturday, 9:30 AM – 4:30 PM
+`
+  };
+
+  /* =====================
+     INTENT DETECTION
+  ===================== */
+
+  let answer = "";
+
+  if (has(["principal", "head of college"])) {
+    answer = knowledge.principal;
+  }
+  else if (has(["faculty", "teachers", "professors", "staff", "experience"])) {
+    answer = knowledge.faculty;
+  }
+  else if (has(["department", "departments", "streams"])) {
+    answer = knowledge.departments;
+  }
+  else if (has(["course", "courses", "programs"])) {
+    answer = knowledge.courses;
+  }
+  else if (has(["bca", "computer application"])) {
+    answer = knowledge.bca;
+  }
+  else if (has(["safe", "environment", "parent", "discipline"])) {
+    answer = knowledge.environment;
+  }
+  else if (has(["contact", "phone", "number", "address", "office"])) {
+    answer = knowledge.contact;
   }
 
   /* =====================
-     GREETINGS
+     SMART RESPONSE (NO DUMB FALLBACK)
   ===================== */
-  if (has(["hi", "hello", "hey", "good morning", "good evening"])) {
+
+  if (!answer) {
     return res.json({
       reply:
-        "Hello 👋 I’m the MIT First Grade College assistant. You can ask me about BCA, BBA, B.Com, admissions, faculty, facilities, or contact details."
+        "I can help you with **faculty details, departments, courses (BCA, BBA, B.Com), academic environment, or contact information**. What would you like to know?"
     });
   }
 
-  /* =====================
-     COURSE DETAILS (SPECIFIC FIRST)
-  ===================== */
-  if (has(["bca", "computer application", "computer course"])) {
-    return res.json({
-      reply:
-        "🎓 **BCA (Bachelor of Computer Applications)** is a 3-year undergraduate program focused on programming, software development, and IT skills.\n\n👉 You can explore BCA details on the Courses section of the website."
-    });
-  }
-
-  if (has(["bcom", "b.com", "commerce"])) {
-    return res.json({
-      reply:
-        "🎓 **B.Com (Bachelor of Commerce)** is a 3-year undergraduate program covering accounting, finance, taxation, and business studies.\n\n👉 Course details are available in the Courses section."
-    });
-  }
-
-  if (has(["bba", "business administration", "management course"])) {
-    return res.json({
-      reply:
-        "🎓 **BBA (Bachelor of Business Administration)** is a 3-year undergraduate program designed to build leadership and management skills.\n\n👉 More details are available in the Courses section of the website."
-    });
-  }
-
-  /* =====================
-     COURSES OFFERED (GENERAL)
-  ===================== */
-  if (has(["courses", "programs", "degrees"])) {
-    return res.json({
-      reply:
-        "MIT First Grade College offers undergraduate programs:\n• BCA\n• BBA\n• B.Com\n\n👉 Please check the Courses section on the website for detailed curriculum."
-    });
-  }
-
-  /* =====================
-     ADMISSIONS
-  ===================== */
-  if (has(["admission", "apply", "join college"])) {
-    return res.json({
-      reply:
-        "📝 **Admissions** are based on merit and University of Mysore guidelines.\n\n👉 You can apply by visiting the **Admissions section** of the website or directly visiting the college office."
-    });
-  }
-
-  if (has(["eligibility", "who can apply"])) {
-    return res.json({
-      reply:
-        "✅ Undergraduate eligibility: Completion of 10+2 or PUC from a recognized board.\n\n👉 Eligibility details are explained in the Admissions section."
-    });
-  }
-
-  /* =====================
-     FACULTY & QUALITY
-  ===================== */
-  if (has(["faculty", "teachers", "staff"])) {
-    return res.json({
-      reply:
-        "👨‍🏫 MIT First Grade College has qualified and experienced faculty members with strong academic, research, and industry backgrounds.\n\n👉 Faculty profiles are available in the Faculty section of the website."
-    });
-  }
-
-  if (has(["principal"])) {
-    return res.json({
-      reply:
-        "🎓 **Principal:** Dr. Chandrajit Mohan (MCA, Ph.D)\n• 15 years teaching experience\n• 12 years research experience\n• Research publications, patents, and projects\n\n👉 Full profile is available on the website."
-    });
-  }
-
-  /* =====================
-     FACILITIES
-  ===================== */
-  if (has(["facility", "library", "lab", "infrastructure"])) {
-    return res.json({
-      reply:
-        "🏫 The college provides facilities such as:\n• Library\n• Computer Labs\n• E-resources\n• Academic support services\n\n👉 Facility details can be viewed on the Facilities section of the website."
-    });
-  }
-
-  /* =====================
-     CONTACT (DIRECT – NO BULLSHIT)
-  ===================== */
-  if (has(["contact", "phone", "call", "number", "email", "address", "office"])) {
-    return res.json({
-      reply:
-        "📞 **Phone:** 0821 233 1722\n" +
-        "📍 **Address:** Mananthavadi Road, Vidyaranyapura, Mysuru – 570008, Karnataka\n" +
-        "🕘 **Office Hours:** Monday–Saturday, 9:30 AM – 4:30 PM\n\n👉 You can also scroll to the Contact section of the website for directions."
-    });
-  }
-
-  /* =====================
-     PARENT QUESTIONS
-  ===================== */
-  if (has(["safe", "environment", "discipline", "parent"])) {
-    return res.json({
-      reply:
-        "👨‍👩‍👧 The college provides a disciplined, safe, and student-friendly environment focused on academic growth and personal development."
-    });
-  }
-
-  /* =====================
-     SMART FALLBACK (NO DUMB ANSWERS)
-  ===================== */
-  return res.json({
-    reply:
-      "That’s a good question 👍\n\nYou can find this information by scrolling through the relevant section of the college website currently displayed in the background."
-  });
+  return res.json({ reply: answer });
 }
