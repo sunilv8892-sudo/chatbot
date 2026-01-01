@@ -5,131 +5,125 @@ export default function handler(req, res) {
 
   const q = req.body.message.toLowerCase();
 
+  function has(words) {
+    return words.some(w => q.includes(w));
+  }
+
   /* =====================
      GREETINGS
   ===================== */
-  if (/(hi|hello|hey|good morning|good evening)/.test(q)) {
+  if (has(["hi", "hello", "hey", "good morning", "good evening"])) {
     return res.json({
       reply:
-        "Hello 👋 Welcome to MIT First Grade College. I can help you with admissions, courses, faculty details, eligibility, and general information."
+        "Hello 👋 I’m the MIT First Grade College assistant. You can ask me about BCA, BBA, B.Com, admissions, faculty, facilities, or contact details."
     });
   }
 
   /* =====================
-     PRINCIPAL DETAILS
+     COURSE DETAILS (SPECIFIC FIRST)
   ===================== */
-  if (q.includes("principal")) {
+  if (has(["bca", "computer application", "computer course"])) {
     return res.json({
       reply:
-        "The Principal of MIT First Grade College is Dr. Chandrajit Mohan, M.C.A, Ph.D. He has 15 years of teaching experience, 3 years of industry experience, and 12 years of research experience. He has published 25 research papers, authored 3 textbooks, holds 2 patents, completed 2 projects, and is currently guiding 5 research scholars."
+        "🎓 **BCA (Bachelor of Computer Applications)** is a 3-year undergraduate program focused on programming, software development, and IT skills.\n\n👉 You can explore BCA details on the Courses section of the website."
     });
   }
 
-  if (q.includes("principal email") || q.includes("contact principal")) {
+  if (has(["bcom", "b.com", "commerce"])) {
     return res.json({
       reply:
-        "The email ID of the Principal, Dr. Chandrajit Mohan, is chandrajithmmca@mitmysore.in."
+        "🎓 **B.Com (Bachelor of Commerce)** is a 3-year undergraduate program covering accounting, finance, taxation, and business studies.\n\n👉 Course details are available in the Courses section."
+    });
+  }
+
+  if (has(["bba", "business administration", "management course"])) {
+    return res.json({
+      reply:
+        "🎓 **BBA (Bachelor of Business Administration)** is a 3-year undergraduate program designed to build leadership and management skills.\n\n👉 More details are available in the Courses section of the website."
     });
   }
 
   /* =====================
-     ACADEMIC BODY MEMBERSHIP
+     COURSES OFFERED (GENERAL)
   ===================== */
-  if (q.includes("bos") || q.includes("academic body") || q.includes("committee")) {
+  if (has(["courses", "programs", "degrees"])) {
     return res.json({
       reply:
-        "Dr. Chandrajit Mohan is a Member of the Board of Studies in Computer Science and also serves on the College Development Advisory Committee of the University of Mysore."
-    });
-  }
-
-  /* =====================
-     COMPUTER SCIENCE FACULTY
-  ===================== */
-  if (q.includes("computer science faculty") || q.includes("bca faculty")) {
-    return res.json({
-      reply:
-        "The Computer Science department has experienced faculty including Dr. Chandrajit Mohan (Principal), Arvind G, Shivaprasad D L, Suhas B. Raj, Yashaswini K, Bhoomika M.M., Parvathi G., Yashashwini B., Renukadevi M, and Abilasha C, with teaching experience ranging from 1 to 15 years."
-    });
-  }
-
-  if (q.includes("faculty qualification")) {
-    return res.json({
-      reply:
-        "Faculty members at MIT First Grade College hold qualifications such as MCA, M.Sc, M.Tech, NET, KSET, and Ph.D., ensuring strong academic and professional expertise."
-    });
-  }
-
-  /* =====================
-     ENGLISH DEPARTMENT FACULTY
-  ===================== */
-  if (q.includes("english faculty") || q.includes("english department")) {
-    return res.json({
-      reply:
-        "The English Department faculty includes Reena Sateesh (MA, M.Phil, 19 years experience), Rakshith Kesari (MA, KSET, 9 years experience), and Manasa (MA, 6 months experience)."
-    });
-  }
-
-  /* =====================
-     FACULTY EXPERIENCE (PARENTS)
-  ===================== */
-  if (q.includes("experienced faculty") || q.includes("teaching quality")) {
-    return res.json({
-      reply:
-        "MIT First Grade College has qualified and experienced faculty members with strong teaching, industry, and research backgrounds, ensuring quality education for students."
-    });
-  }
-
-  /* =====================
-     COURSES
-  ===================== */
-  if (q.includes("course") || q.includes("program")) {
-    return res.json({
-      reply:
-        "MIT First Grade College offers undergraduate programs including BCA, BBA, and B.Com."
+        "MIT First Grade College offers undergraduate programs:\n• BCA\n• BBA\n• B.Com\n\n👉 Please check the Courses section on the website for detailed curriculum."
     });
   }
 
   /* =====================
      ADMISSIONS
   ===================== */
-  if (q.includes("admission") || q.includes("apply")) {
+  if (has(["admission", "apply", "join college"])) {
     return res.json({
       reply:
-        "Admissions at MIT First Grade College are based on merit and university guidelines. Students can apply by visiting the college office or through the official website."
+        "📝 **Admissions** are based on merit and University of Mysore guidelines.\n\n👉 You can apply by visiting the **Admissions section** of the website or directly visiting the college office."
     });
   }
 
-/* =====================
-   COLLEGE CONTACT DETAILS
-===================== */
-if (
-  q.includes("contact") ||
-  q.includes("phone") ||
-  q.includes("mobile") ||
-  q.includes("number") ||
-  q.includes("email") ||
-  q.includes("mail") ||
-  q.includes("office") ||
-  q.includes("admission contact") ||
-  q.includes("call")
-) {
-  return res.json({
-    reply:
-      "📞 Phone: 0821 233 1722\n" +
-      "📍 Address: Mananthavadi Road, Vidyaranyapura, Mysuru – 570008, Karnataka\n" +
-      "🌐 Website: https://mitfgc.in\n" +
-      "🕘 Office Hours: Monday to Saturday, 9:30 AM – 4:30 PM"
-  });
-}
-
-
+  if (has(["eligibility", "who can apply"])) {
+    return res.json({
+      reply:
+        "✅ Undergraduate eligibility: Completion of 10+2 or PUC from a recognized board.\n\n👉 Eligibility details are explained in the Admissions section."
+    });
+  }
 
   /* =====================
-     FALLBACK (SAFE)
+     FACULTY & QUALITY
+  ===================== */
+  if (has(["faculty", "teachers", "staff"])) {
+    return res.json({
+      reply:
+        "👨‍🏫 MIT First Grade College has qualified and experienced faculty members with strong academic, research, and industry backgrounds.\n\n👉 Faculty profiles are available in the Faculty section of the website."
+    });
+  }
+
+  if (has(["principal"])) {
+    return res.json({
+      reply:
+        "🎓 **Principal:** Dr. Chandrajit Mohan (MCA, Ph.D)\n• 15 years teaching experience\n• 12 years research experience\n• Research publications, patents, and projects\n\n👉 Full profile is available on the website."
+    });
+  }
+
+  /* =====================
+     FACILITIES
+  ===================== */
+  if (has(["facility", "library", "lab", "infrastructure"])) {
+    return res.json({
+      reply:
+        "🏫 The college provides facilities such as:\n• Library\n• Computer Labs\n• E-resources\n• Academic support services\n\n👉 Facility details can be viewed on the Facilities section of the website."
+    });
+  }
+
+  /* =====================
+     CONTACT (DIRECT – NO BULLSHIT)
+  ===================== */
+  if (has(["contact", "phone", "call", "number", "email", "address", "office"])) {
+    return res.json({
+      reply:
+        "📞 **Phone:** 0821 233 1722\n" +
+        "📍 **Address:** Mananthavadi Road, Vidyaranyapura, Mysuru – 570008, Karnataka\n" +
+        "🕘 **Office Hours:** Monday–Saturday, 9:30 AM – 4:30 PM\n\n👉 You can also scroll to the Contact section of the website for directions."
+    });
+  }
+
+  /* =====================
+     PARENT QUESTIONS
+  ===================== */
+  if (has(["safe", "environment", "discipline", "parent"])) {
+    return res.json({
+      reply:
+        "👨‍👩‍👧 The college provides a disciplined, safe, and student-friendly environment focused on academic growth and personal development."
+    });
+  }
+
+  /* =====================
+     SMART FALLBACK (NO DUMB ANSWERS)
   ===================== */
   return res.json({
     reply:
-      "For detailed or updated information, please visit the official MIT First Grade College website or contact the college office."
+      "That’s a good question 👍\n\nYou can find this information by scrolling through the relevant section of the college website currently displayed in the background."
   });
 }
-
