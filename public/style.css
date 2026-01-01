@@ -8,17 +8,18 @@ body {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 60px;
-  height: 60px;
   background: #004aad;
   color: white;
-  border-radius: 50%;
-  font-size: 28px;
+  padding: 14px 18px;
+  border-radius: 30px;
+  font-size: 16px;
+  font-weight: bold;
   display: flex;
   align-items: center;
-  justify-content: center;
+  gap: 8px;
   cursor: pointer;
   z-index: 1000;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
 }
 
 /* Chat window */
@@ -92,22 +93,29 @@ body {
   cursor: pointer;
 }
 
-/* Mobile optimization */
+/* Mobile chatbot button - BIG & NOTICEABLE */
 @media (max-width: 600px) {
- #chat-toggle {
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  background: #004aad;
-  color: white;
-  padding: 14px 18px;
-  border-radius: 30px;
-  font-size: 16px;
-  font-weight: bold;
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  cursor: pointer;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  #chat-toggle {
+    width: 90%;
+    left: 5%;
+    right: 5%;
+    bottom: 15px;
+    justify-content: center;
+    font-size: 18px;
+    padding: 16px;
+    border-radius: 12px;
+  }
+
+  #chat-toggle span {
+    display: inline;
+  }
+
+  #chatbox {
+    width: 100%;
+    right: 0;
+    left: 0;
+    bottom: 70px;
+    border-radius: 0;
+  }
 }
+
