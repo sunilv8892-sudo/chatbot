@@ -1,57 +1,63 @@
 export default function handler(req, res) {
   try {
-    /* =========================
-       METHOD CHECK
-    ========================= */
     if (req.method !== "POST") {
       return res.status(405).json({ reply: "Method not allowed" });
     }
 
-    /* =========================
-       SAFE BODY PARSING (VERCEL)
-    ========================= */
     let message = "";
+    if (typeof req.body === "string") message = req.body;
+    else if (req.body && typeof req.body === "object") message = req.body.message || "";
 
-    if (typeof req.body === "string") {
-      message = req.body;
-    } else if (typeof req.body === "object" && req.body !== null) {
-      message = req.body.message || "";
-    }
+    const q = message.toLowerCase().trim();
+    if (!q) return res.json({ reply: "Please type your question." });
 
-    const raw = message.toLowerCase().trim();
-    if (!raw) {
-      return res.json({ reply: "Please type your question." });
-    }
-
-    const q = raw
-      .replace(/[^a-z0-9 ]/g, " ")
-      .replace(/\s+/g, " ")
-      .trim();
-
-    const hasAny = (arr) => arr.some((w) => q.includes(w));
+    const hasAny = (arr) => arr.some(w => q.includes(w));
 
     /* =========================
-       GREETINGS
+       🔥 HIGH PRIORITY INTENTS
     ========================= */
-    if (hasAny(["hi", "hello", "hey"])) {
+
+    // ADMISSION (FIXED + GOOD RESPONSE)
+    if (hasAny(["admission", "apply", "join", "enroll"])) {
       return res.json({
         reply:
-          "Hello 👋 I’m the MIT First Grade College chatbot.\n\n" +
-          "You can ask me about admissions, courses, eligibility, notes, faculty, or location.",
+          "📝 **Admissions – MIT First Grade College**\n\n" +
+          "Admissions are open and based on merit as per University of Mysore guidelines.\n\n" +
+          "You can:\n" +
+          "• Apply online\n" +
+          "• Visit the college office\n" +
+          "• Contact for counselling & fee details",
         links: [
-          { label: "Admissions Page", url: "https://mitfgc.in/admissions" },
-          { label: "Courses Page", url: "https://mitfgc.in/courses" }
+          { label: "Apply for Admission", url: "https://mitfgc.in/admissions" },
+          { label: "Contact College", url: "https://mitfgc.in/contact-us" }
         ]
       });
     }
 
-    /* =========================
-       LOCATION
-    ========================= */
-    if (hasAny(["location", "address", "where"])) {
+    // NOTES (FORCED)
+    if (hasAny(["notes", "note", "pdf", "study material", "question paper"])) {
       return res.json({
         reply:
-          "📍 MIT First Grade College is located at Mananthavadi Road, Vidyaranyapura, Mysuru – 570008, Karnataka.",
+          "📚 **Study Materials & Notes**\n\n" +
+          "Click below to access official notes and previous question papers.",
+        links: [
+          {
+            label: "Open Study Materials",
+            url: "https://drive.google.com/drive/folders/1bTRaNQdcS5d9Bdxwzi9s5_R8QJZSZvRD"
+          }
+        ]
+      });
+    }
+
+    // LOCATION / ADDRESS (FIXED)
+    if (hasAny(["location", "address", "where", "place"])) {
+      return res.json({
+        reply:
+          "📍 **MIT First Grade College Address**\n\n" +
+          "Mananthavadi Road,\n" +
+          "Vidyaranyapura,\n" +
+          "Mysuru – 570008,\n" +
+          "Karnataka, India",
         links: [
           {
             label: "Open in Google Maps",
@@ -62,30 +68,16 @@ export default function handler(req, res) {
     }
 
     /* =========================
-       CONTACT
-    ========================= */
-    if (hasAny(["contact", "phone", "email"])) {
-      return res.json({
-        reply:
-          "📞 Phone: 0821 233 1722\n" +
-          "📧 Email: chandrajithmmca@mitmysore.in\n" +
-          "🕘 Office Hours: Monday–Saturday, 9:30 AM – 4:30 PM",
-        links: [
-          { label: "Contact Page", url: "https://mitfgc.in/contact-us" }
-        ]
-      });
-    }
-
-    /* =========================
        COURSES
     ========================= */
+
     if (hasAny(["courses", "course", "program"])) {
       return res.json({
         reply:
-          "🎓 Courses Offered at MIT First Grade College:\n\n" +
-          "• BCA – Bachelor of Computer Applications\n" +
-          "• BBA – Bachelor of Business Administration\n" +
-          "• B.Com – Bachelor of Commerce",
+          "🎓 **Courses Offered**\n\n" +
+          "• BCA – Computer Applications\n" +
+          "• BBA – Business Administration\n" +
+          "• B.Com – Commerce",
         links: [
           { label: "BCA Details", url: "https://mitfgc.in/bca" },
           { label: "BBA Details", url: "https://mitfgc.in/bba" },
@@ -95,121 +87,75 @@ export default function handler(req, res) {
     }
 
     /* =========================
-       BCA
-    ========================= */
-    if (hasAny(["bca"])) {
-      return res.json({
-        reply:
-          "🎓 BCA is a 3-year undergraduate program focused on programming and software development.",
-        links: [
-          { label: "BCA Curriculum", url: "https://mitfgc.in/bca" },
-          { label: "Apply for BCA", url: "https://mitfgc.in/admissions" }
-        ]
-      });
-    }
-
-    /* =========================
-       BBA
-    ========================= */
-    if (hasAny(["bba"])) {
-      return res.json({
-        reply:
-          "🎓 BBA focuses on management, leadership, and entrepreneurship.",
-        links: [
-          { label: "BBA Program", url: "https://mitfgc.in/bba" },
-          { label: "Apply for BBA", url: "https://mitfgc.in/admissions" }
-        ]
-      });
-    }
-
-    /* =========================
-       B.COM
-    ========================= */
-    if (hasAny(["bcom", "b.com"])) {
-      return res.json({
-        reply:
-          "🎓 B.Com focuses on accounting, finance, and taxation.",
-        links: [
-          { label: "B.Com Program", url: "https://mitfgc.in/b-com" },
-          { label: "Apply for B.Com", url: "https://mitfgc.in/admissions" }
-        ]
-      });
-    }
-
-    /* =========================
        ELIGIBILITY
     ========================= */
+
     if (hasAny(["eligibility", "eligible", "qualification"])) {
       return res.json({
         reply:
-          "✅ Eligibility:\n\n" +
+          "✅ **Eligibility Criteria**\n\n" +
           "• BCA: 10+2 with Maths / CS / Accountancy OR relevant diploma\n" +
           "• BBA & B.Com: 10+2 in any discipline",
         links: [
-          { label: "Admissions Info", url: "https://mitfgc.in/admissions" }
+          { label: "Admission Info", url: "https://mitfgc.in/admissions" }
         ]
       });
     }
 
     /* =========================
-       ADMISSIONS
+       CONTACT
     ========================= */
-    if (hasAny(["admission", "apply", "join"])) {
+
+    if (hasAny(["contact", "phone", "email"])) {
       return res.json({
         reply:
-          "📝 Admissions at MIT First Grade College are based on merit and University of Mysore guidelines.",
+          "📞 Phone: 0821 233 1722\n" +
+          "📧 Email: chandrajithmmca@mitmysore.in\n" +
+          "🕘 Office Hours: Mon–Sat, 9:30 AM – 4:30 PM",
         links: [
-          { label: "Apply Now", url: "https://mitfgc.in/admissions" },
-          { label: "Contact Office", url: "https://mitfgc.in/contact-us" }
+          { label: "Contact Page", url: "https://mitfgc.in/contact-us" }
         ]
       });
     }
 
     /* =========================
-       NOTES
+       GREETING
     ========================= */
-    if (hasAny(["notes", "pdf", "study material"])) {
+
+    if (hasAny(["hi", "hello", "hey"])) {
       return res.json({
         reply:
-          "📚 Study materials and previous question papers are available below.",
+          "Hello 👋 I’m the MIT First Grade College chatbot.\n\n" +
+          "Ask me about admissions, courses, eligibility, notes, location, or contact details.",
         links: [
-          {
-            label: "Open Study Materials",
-            url: "https://drive.google.com/drive/folders/1bTRaNQdcS5d9Bdxwzi9s5_R8QJZSZvRD"
-          }
+          { label: "Admissions", url: "https://mitfgc.in/admissions" },
+          { label: "Courses", url: "https://mitfgc.in/courses" }
         ]
       });
     }
 
     /* =========================
-       FEES
+       FALLBACK (SMART)
     ========================= */
-    if (hasAny(["fees", "fee structure"])) {
-      return res.json({
-        reply:
-          "💰 Fee structure varies by course and university norms.",
-        links: [
-          { label: "Contact for Fees", url: "https://mitfgc.in/contact-us" }
-        ]
-      });
-    }
 
-    /* =========================
-       FALLBACK
-    ========================= */
     return res.json({
       reply:
-        "I can help with admissions, courses, eligibility, notes, faculty, location, and contact details.",
+        "I can help you with:\n\n" +
+        "• Admissions\n" +
+        "• Courses (BCA, BBA, B.Com)\n" +
+        "• Eligibility\n" +
+        "• Study Materials\n" +
+        "• Location & Contact",
       links: [
         { label: "Admissions", url: "https://mitfgc.in/admissions" },
-        { label: "Courses", url: "https://mitfgc.in/courses" }
+        { label: "Contact College", url: "https://mitfgc.in/contact-us" }
       ]
     });
 
-  } catch (err) {
-    console.error("CHATBOT ERROR:", err);
+  } catch (e) {
+    console.error("CHATBOT ERROR:", e);
     return res.json({
-      reply: "Something went wrong internally, but the chatbot is still alive."
+      reply: "Something went wrong internally, but the chatbot is still running."
     });
   }
 }
