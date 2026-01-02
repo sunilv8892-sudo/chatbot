@@ -87,7 +87,7 @@ export default async function handler(req, res) {
 ========================= */
 
 const geminiRes = await fetch(
-  `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
+  `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`,
   {
     method: "POST",
     headers: { "Content-Type": "application/json" },
@@ -97,32 +97,29 @@ const geminiRes = await fetch(
           role: "user",
           parts: [{ text: message }]
         }
-      ]
+      ],
+      generationConfig: {
+        temperature: 0.7,
+        topP: 0.9,
+        maxOutputTokens: 400
+      }
     })
   }
 );
 
-// 🔥 LOG EVERYTHING
-console.log("GEMINI STATUS:", geminiRes.status);
+const data = await geminiRes.json();
+console.log("GEMINI RAW RESPONSE:", JSON.stringify(data, null, 2));
 
-const rawText = await geminiRes.text();
-console.log("GEMINI RAW TEXT:", rawText);
+const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
-// Try parsing manually
-let data;
-try {
-  data = JSON.parse(rawText);
-} catch (e) {
-  console.error("JSON PARSE FAILED");
+if (!aiText) {
+  return res.json({
+    reply:
+      "I couldn’t generate a response right now. Please try asking again."
+  });
 }
 
-return res.json({
-  reply: "DEBUG MODE — check Vercel logs",
-  debug: {
-    status: geminiRes.status,
-    raw: rawText
-  }
-});
+return res.json({ reply: aiText.trim() });
 
 
 
@@ -134,6 +131,7 @@ return res.json({
     });
   }
 }
+
 
 
 
