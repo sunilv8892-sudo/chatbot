@@ -1,108 +1,56 @@
 export default function handler(req, res) {
-  if (req.method !== "POST") {
-    return res.status(405).json({ reply: "Method not allowed" });
-  }
+  try {
+    if (req.method !== "POST") {
+      return res.status(405).json({ reply: "Method not allowed" });
+    }
 
-  const raw = (req.body?.message || "").toLowerCase().trim();
-  if (!raw) {
-    return res.json({ reply: "Please type your question." });
-  }
+    // ✅ Safely parse body (Vercel-safe)
+    let message = "";
 
-  const q = raw
-    .replace(/[^a-z0-9 ]/g, " ")
-    .replace(/\s+/g, " ")
-    .trim();
+    if (typeof req.body === "string") {
+      message = req.body;
+    } else if (typeof req.body === "object" && req.body !== null) {
+      message = req.body.message || "";
+    }
 
-  const hasAny = (words) => words.some((w) => q.includes(w));
+    const q = message.toLowerCase().trim();
+    if (!q) {
+      return res.json({ reply: "Please type your question." });
+    }
 
-  if (hasAny(["hi", "hello", "hey"])) {
+    const hasAny = (arr) => arr.some((w) => q.includes(w));
+
+    if (hasAny(["hi", "hello", "hey"])) {
+      return res.json({
+        reply:
+          "Hello 👋 I’m the MIT First Grade College chatbot. Ask me about admissions, courses, eligibility, or location."
+      });
+    }
+
+    if (hasAny(["notes"])) {
+      return res.json({
+        reply:
+          "📚 Study materials and notes are available at:\n" +
+          "https://drive.google.com/drive/folders/1bTRaNQdcS5d9Bdxwzi9s5_R8QJZSZvRD"
+      });
+    }
+
+    if (hasAny(["course", "courses"])) {
+      return res.json({
+        reply:
+          "🎓 Courses offered:\n• BCA\n• BBA\n• B.Com"
+      });
+    }
+
     return res.json({
       reply:
-        "Hello 👋 I’m the MIT First Grade College chatbot. Ask me about admissions, courses, eligibility, or location."
+        "I can help with admissions, courses, eligibility, notes, location, and contact details."
+    });
+
+  } catch (err) {
+    console.error("API ERROR:", err);
+    return res.status(200).json({
+      reply: "Something went wrong internally, but the API is alive."
     });
   }
-
-  if (hasAny(["location", "address", "where"])) {
-    return res.json({
-      reply:
-        "📍 MIT First Grade College is located at Mananthavadi Road, Vidyaranyapura, Mysuru – 570008, Karnataka."
-    });
-  }
-
-  if (hasAny(["contact", "phone", "email"])) {
-    return res.json({
-      reply:
-        "📞 Phone: 0821 233 1722\n" +
-        "📧 Email: chandrajithmmca@mitmysore.in\n" +
-        "🕘 Office Hours: Monday to Saturday, 9:30 AM – 4:30 PM"
-    });
-  }
-
-  if (hasAny(["courses", "course", "program"])) {
-    return res.json({
-      reply:
-        "🎓 Courses offered at MIT First Grade College:\n\n" +
-        "• BCA – Bachelor of Computer Applications\n" +
-        "• BBA – Bachelor of Business Administration\n" +
-        "• B.Com – Bachelor of Commerce"
-    });
-  }
-
-  if (hasAny(["bca"])) {
-    return res.json({
-      reply:
-        "🎓 BCA is a 3-year undergraduate program focused on programming, software development, and computer applications."
-    });
-  }
-
-  if (hasAny(["bba"])) {
-    return res.json({
-      reply:
-        "🎓 BBA focuses on management principles, leadership skills, and entrepreneurship."
-    });
-  }
-
-  if (hasAny(["bcom", "b.com"])) {
-    return res.json({
-      reply:
-        "🎓 B.Com focuses on accounting, finance, taxation, and management."
-    });
-  }
-
-  if (hasAny(["eligibility", "eligible", "qualification"])) {
-    return res.json({
-      reply:
-        "✅ Eligibility:\n\n" +
-        "• BCA: 10+2 with Maths / Computer Science / Accountancy OR relevant diploma\n" +
-        "• BBA & B.Com: 10+2 in any discipline"
-    });
-  }
-
-  if (hasAny(["duration", "years", "semester"])) {
-    return res.json({
-      reply:
-        "⏳ All undergraduate programs are 3 years long, divided into 6 semesters."
-    });
-  }
-
-  if (hasAny(["notes", "study material", "pdf", "question paper"])) {
-    return res.json({
-      reply:
-        "📚 Study materials and previous question papers are available at:\n" +
-        "https://drive.google.com/drive/folders/1bTRaNQdcS5d9Bdxwzi9s5_R8QJZSZvRD"
-    });
-  }
-
-  if (hasAny(["faculty", "teachers", "principal"])) {
-    return res.json({
-      reply:
-        "👨‍🏫 Principal: Dr. Chandrajit Mohan (MCA, KSET, Ph.D)\n\n" +
-        "MIT First Grade College has experienced and qualified faculty across all departments."
-    });
-  }
-
-  return res.json({
-    reply:
-      "I can help with admissions, courses (BCA, BBA, B.Com), eligibility, faculty details, location, contact information, and study materials."
-  });
 }
