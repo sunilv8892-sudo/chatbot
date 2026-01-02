@@ -34,23 +34,53 @@ document.addEventListener("DOMContentLoaded", () => {
     addMessage(text, "user");
     input.value = "";
 
-   fetch("/api/chat", {
-  method: "POST",
-  headers: { "Content-Type": "application/json" },
-  body: JSON.stringify({ message: text })
-})
-
+    fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text })
+    })
       .then(res => res.json())
-      .then(data => addMessage(data.reply, "bot"))
+      .then(data => {
+        addMessage(data.reply, "bot", data.links || []);
+      })
       .catch(() => addMessage("Server error.", "bot"));
   }
 
-  function addMessage(text, type) {
+  // 🔥 FIXED: SUPPORTS CLICKABLE BUTTONS
+  function addMessage(text, type, links = []) {
     const div = document.createElement("div");
     div.className = type;
     div.textContent = text;
+
+    if (Array.isArray(links) && links.length > 0) {
+      const btnWrap = document.createElement("div");
+      btnWrap.style.marginTop = "8px";
+      btnWrap.style.display = "flex";
+      btnWrap.style.flexWrap = "wrap";
+      btnWrap.style.gap = "6px";
+
+      links.forEach(link => {
+        const btn = document.createElement("button");
+        btn.textContent = link.label;
+        btn.style.background = "#002147";
+        btn.style.color = "#fff";
+        btn.style.border = "none";
+        btn.style.padding = "6px 10px";
+        btn.style.borderRadius = "6px";
+        btn.style.cursor = "pointer";
+        btn.style.fontSize = "13px";
+
+        btn.onclick = () => {
+          window.open(link.url, "_blank");
+        };
+
+        btnWrap.appendChild(btn);
+      });
+
+      div.appendChild(btnWrap);
+    }
+
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
   }
 });
-
