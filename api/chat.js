@@ -15,10 +15,6 @@ export default function handler(req, res) {
 
   const hasAny = (words) => words.some((w) => q.includes(w));
 
-  /* =========================
-     KNOWLEDGE BASE
-  ========================= */
-
   if (hasAny(["hi", "hello", "hey"])) {
     return res.json({
       reply:
@@ -42,7 +38,7 @@ export default function handler(req, res) {
     });
   }
 
-  if (hasAny(["courses", "course", "program"]))) {
+  if (hasAny(["courses", "course", "program"])) {
     return res.json({
       reply:
         "🎓 Courses offered at MIT First Grade College:\n\n" +
@@ -92,8 +88,7 @@ export default function handler(req, res) {
   if (hasAny(["notes", "study material", "pdf", "question paper"])) {
     return res.json({
       reply:
-        "📚 Study materials and previous question papers are available through official college channels.\n\n" +
-        "They are also available at:\n" +
+        "📚 Study materials and previous question papers are available at:\n" +
         "https://drive.google.com/drive/folders/1bTRaNQdcS5d9Bdxwzi9s5_R8QJZSZvRD"
     });
   }
@@ -105,10 +100,6 @@ export default function handler(req, res) {
         "MIT First Grade College has experienced and qualified faculty across all departments."
     });
   }
-
-  /* =========================
-     FALLBACK
-  ========================= */
 
   return res.json({
     reply:
