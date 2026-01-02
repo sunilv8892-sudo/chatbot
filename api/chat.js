@@ -72,43 +72,28 @@ export default async function handler(req, res) {
     // Everything else goes to OpenAI
 
     const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "gpt-4o-mini",
-        temperature: 0.7,
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a helpful, honest college assistant for MIT First Grade College, Mysuru. " +
-              "Answer naturally like a human. " +
-              "Do not exaggerate. " +
-              "If something is opinion-based (campus life, enjoyment, whether to join), " +
-              "answer thoughtfully and generally, without making false claims."
-          },
-          {
-            role: "user",
-            content: message
-          }
-        ]
-      })
-    });
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+  },
+  body: JSON.stringify({
+    model: "gpt-4o-mini",
+    messages: [
+      { role: "system", content: "You are a helpful assistant." },
+      { role: "user", content: message }
+    ]
+  })
+});
 
-    const data = await openaiRes.json();
-    const aiText = data?.choices?.[0]?.message?.content;
+const raw = await openaiRes.text();
+console.log("OPENAI RAW:", raw);
 
-    if (!aiText) {
-      return res.json({
-        reply:
-          "I’m having trouble answering that right now. Please try rephrasing your question."
-      });
-    }
+return res.json({
+  reply: "DEBUG MODE — check function logs",
+  debug: raw
+});
 
-    return res.json({ reply: aiText.trim() });
 
   } catch (err) {
     console.error("OPENAI ERROR:", err);
@@ -117,3 +102,4 @@ export default async function handler(req, res) {
     });
   }
 }
+
