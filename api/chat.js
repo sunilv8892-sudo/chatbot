@@ -65,41 +65,55 @@ export default async function handler(req, res) {
     }
 
     // ---- AI (GROQ) FOR OPINIONS / GENERAL QUESTIONS ----
-    const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
+   const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+    "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
+  },
+  body: JSON.stringify({
+    model: "llama3-8b-8192", // ✅ guaranteed free-tier model
+    temperature: 0.7,
+    messages: [
+      {
+        role: "system",
+        content:
+          "You are a helpful, honest college assistant for MIT First Grade College, Mysuru. " +
+          "Answer naturally like a human. Do not invent facts."
       },
-      body: JSON.stringify({
-        model: "llama3-70b-8192",
-        temperature: 0.7,
-        messages: [
-          {
-            role: "system",
-            content:
-              "You are a helpful, honest college assistant for MIT First Grade College, Mysuru. " +
-              "Answer naturally like a human. Do not exaggerate or invent facts. " +
-              "For opinion questions (campus life, whether to join), respond thoughtfully and generally."
-          },
-          {
-            role: "user",
-            content: message
-          }
-        ]
-      })
-    });
+      {
+        role: "user",
+        content: message
+      }
+    ]
+  })
+});
 
-    const data = await groqRes.json();
-    const aiText = data?.choices?.[0]?.message?.content;
+// 🔴 LOG EVERYTHING
+const raw = await groqRes.text();
+console.log("GROQ STATUS:", groqRes.status);
+console.log("GROQ RAW:", raw);
 
-    if (!aiText) {
-      return res.json({
-        reply: "I couldn’t generate a response right now. Please try again."
-      });
-    }
+// try parse
+let data;
+try {
+  data = JSON.parse(raw);
+} catch (e) {
+  return res.json({
+    reply: "Groq returned an invalid response."
+  });
+}
 
-    return res.json({ reply: aiText.trim() });
+const aiText = data?.choices?.[0]?.message?.content;
+
+if (!aiText) {
+  return res.json({
+    reply: "Groq did not return an answer. Check function logs."
+  });
+}
+
+return res.json({ reply: aiText.trim() });
+
 
   } catch (err) {
     console.error("GROQ ERROR:", err);
@@ -108,3 +122,4 @@ export default async function handler(req, res) {
     });
   }
 }
+
