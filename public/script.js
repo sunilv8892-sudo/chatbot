@@ -1,39 +1,31 @@
 <script>
   const toggleBtn = document.getElementById("chat-toggle");
-  const chatbox   = document.getElementById("chatbox");
-  const closeBtn  = document.getElementById("close-chat");
-  const messages  = document.getElementById("messages");
-  const input     = document.getElementById("input");
-  const sendBtn   = document.getElementById("send-btn");
+  const chatbox = document.getElementById("chatbox");
+  const closeBtn = document.getElementById("close-chat");
+  const messages = document.getElementById("messages");
+  const input = document.getElementById("input");
+  const sendBtn = document.getElementById("send-btn");
 
-  let isOpen = false;
+  let chatOpen = false;
 
-  function openChat() {
-    chatbox.classList.remove("hidden");
-    isOpen = true;
-  }
-
-  function closeChat() {
-    chatbox.classList.add("hidden");
-    isOpen = false;
-  }
-
-  // 🔵 SAME BUTTON TO OPEN + CLOSE
-  toggleBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    if (isOpen) {
-      closeChat();
+  // Toggle chat (OPEN ↔ CLOSE)
+  toggleBtn.addEventListener("click", () => {
+    if (chatOpen) {
+      chatbox.classList.add("hidden");
+      chatOpen = false;
     } else {
-      openChat();
+      chatbox.classList.remove("hidden");
+      chatOpen = true;
     }
   });
 
-  // ❌ CLOSE BUTTON
-  closeBtn.addEventListener("click", (e) => {
-    e.stopPropagation();
-    closeChat();
+  // Close using ❌
+  closeBtn.addEventListener("click", () => {
+    chatbox.classList.add("hidden");
+    chatOpen = false;
   });
 
+  // Send message
   sendBtn.addEventListener("click", send);
   input.addEventListener("keydown", (e) => {
     if (e.key === "Enter") send();
