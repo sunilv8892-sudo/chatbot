@@ -97,35 +97,33 @@ const geminiRes = await fetch(
           role: "user",
           parts: [{ text: message }]
         }
-      ],
-      generationConfig: {
-        temperature: 0.7,
-        topP: 0.9,
-        maxOutputTokens: 300
-      },
-      safetySettings: [
-        { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
-        { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
-        { category: "HARM_CATEGORY_SEXUAL_CONTENT", threshold: "BLOCK_NONE" },
-        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
       ]
     })
   }
 );
 
-const data = await geminiRes.json();
-console.log("GEMINI RESPONSE:", JSON.stringify(data, null, 2));
+// 🔥 LOG EVERYTHING
+console.log("GEMINI STATUS:", geminiRes.status);
 
-const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+const rawText = await geminiRes.text();
+console.log("GEMINI RAW TEXT:", rawText);
 
-if (!aiText) {
-  return res.json({
-    reply:
-      "I couldn’t generate a response right now. Please try asking in a different way."
-  });
+// Try parsing manually
+let data;
+try {
+  data = JSON.parse(rawText);
+} catch (e) {
+  console.error("JSON PARSE FAILED");
 }
 
-return res.json({ reply: aiText.trim() });
+return res.json({
+  reply: "DEBUG MODE — check Vercel logs",
+  debug: {
+    status: geminiRes.status,
+    raw: rawText
+  }
+});
+
 
 
   } catch (err) {
@@ -136,6 +134,7 @@ return res.json({ reply: aiText.trim() });
     });
   }
 }
+
 
 
 
