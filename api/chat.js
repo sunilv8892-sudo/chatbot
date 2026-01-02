@@ -4,9 +4,7 @@ export default async function handler(req, res) {
       return res.status(405).json({ reply: "Method not allowed" });
     }
 
-    /* =========================
-       SAFE BODY PARSING
-    ========================= */
+    // ---------- SAFE BODY ----------
     let message = "";
     if (typeof req.body === "string") message = req.body;
     else if (req.body && typeof req.body === "object") message = req.body.message || "";
@@ -16,27 +14,13 @@ export default async function handler(req, res) {
 
     const hasAny = (arr) => arr.some(w => q.includes(w));
 
-    /* =========================
-       🔒 RULE-BASED KNOWLEDGE (FIRST)
-    ========================= */
-
-    if (hasAny(["hi", "hello", "hey"])) {
-      return res.json({
-        reply:
-          "Hello 👋 I’m the MIT First Grade College chatbot.\n\n" +
-          "You can ask me about admissions, courses, eligibility, notes, location, or general college information.",
-        links: [
-          { label: "Admissions", url: "https://mitfgc.in/admission/" },
-          { label: "Courses", url: "https://mitfgc.in/courses/" }
-        ]
-      });
-    }
-
-    if (hasAny(["admission", "apply", "join"])) {
+    // ---------- FACT / ACTION RULES (FAST + BUTTONS) ----------
+    // Admissions (FACT)
+    if (hasAny(["admission", "apply"])) {
       return res.json({
         reply:
           "📝 **Admissions – MIT First Grade College**\n\n" +
-          "Admissions are open and based on merit as per University of Mysore guidelines.",
+          "Admissions are based on merit as per University of Mysore guidelines.",
         links: [
           { label: "Apply for Admission", url: "https://mitfgc.in/admission/" },
           { label: "Contact College", url: "https://mitfgc.in/contact-us/" }
@@ -44,10 +28,10 @@ export default async function handler(req, res) {
       });
     }
 
-    if (hasAny(["notes", "pdf", "study material"])) {
+    // Notes
+    if (hasAny(["notes", "pdf", "study material", "question paper"])) {
       return res.json({
-        reply:
-          "📚 Study materials and previous question papers are available below.",
+        reply: "📚 Study materials and previous question papers:",
         links: [
           {
             label: "Open Study Materials",
@@ -57,10 +41,11 @@ export default async function handler(req, res) {
       });
     }
 
+    // Location
     if (hasAny(["location", "address", "where"])) {
       return res.json({
         reply:
-          "📍 MIT First Grade College is located at Mananthavadi Road, Vidyaranyapura, Mysuru – 570008, Karnataka.",
+          "📍 MIT First Grade College, Mananthavadi Road, Vidyaranyapura, Mysuru – 570008.",
         links: [
           {
             label: "Open in Google Maps",
@@ -70,69 +55,65 @@ export default async function handler(req, res) {
       });
     }
 
-    if (hasAny(["is this college good", "worth joining", "safe", "parent"])) {
+    // Greeting (first contact only)
+    if (hasAny(["hi", "hello", "hey"])) {
       return res.json({
         reply:
-          "That’s a very valid question 😊\n\n" +
-          "MIT First Grade College is a well-established institution in Mysuru, known for a disciplined campus, experienced faculty, and focus on academics.\n\n" +
-          "It is considered a good and safe choice by students and parents.",
+          "Hello 👋 I’m the MIT First Grade College chatbot.\n\n" +
+          "You can ask me about admissions, courses, campus life, or anything you want to know.",
         links: [
-          { label: "Admissions", url: "https://mitfgc.in/admission/" }
+          { label: "Admissions", url: "https://mitfgc.in/admission/" },
+          { label: "Courses", url: "https://mitfgc.in/courses/" }
         ]
       });
     }
 
- /* =========================
-   🤖 GEMINI AI FALLBACK (REAL, HUMAN)
-========================= */
+    // ---------- OPINION / HUMAN QUESTIONS → AI ----------
+    // Everything else goes to OpenAI
 
-const geminiRes = await fetch(
-  `https://generativelanguage.googleapis.com/v1/models/gemini-1.5-flash-latest:generateContent?key=${process.env.GEMINI_API_KEY}`,
-  {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({
-      contents: [
-        {
-          role: "user",
-          parts: [{ text: message }]
-        }
-      ],
-      generationConfig: {
+    const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "gpt-4o-mini",
         temperature: 0.7,
-        topP: 0.9,
-        maxOutputTokens: 400
-      }
-    })
-  }
-);
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a helpful, honest college assistant for MIT First Grade College, Mysuru. " +
+              "Answer naturally like a human. " +
+              "Do not exaggerate. " +
+              "If something is opinion-based (campus life, enjoyment, whether to join), " +
+              "answer thoughtfully and generally, without making false claims."
+          },
+          {
+            role: "user",
+            content: message
+          }
+        ]
+      })
+    });
 
-const data = await geminiRes.json();
-console.log("GEMINI RAW RESPONSE:", JSON.stringify(data, null, 2));
+    const data = await openaiRes.json();
+    const aiText = data?.choices?.[0]?.message?.content;
 
-const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
+    if (!aiText) {
+      return res.json({
+        reply:
+          "I’m having trouble answering that right now. Please try rephrasing your question."
+      });
+    }
 
-if (!aiText) {
-  return res.json({
-    reply:
-      "I couldn’t generate a response right now. Please try asking again."
-  });
-}
-
-return res.json({ reply: aiText.trim() });
-
-
+    return res.json({ reply: aiText.trim() });
 
   } catch (err) {
-    console.error("CHATBOT ERROR:", err);
+    console.error("OPENAI ERROR:", err);
     return res.json({
-      reply:
-        "Sorry, something went wrong. Please try again or contact the college office."
+      reply: "Something went wrong. Please try again in a moment."
     });
   }
 }
-
-
-
-
-
