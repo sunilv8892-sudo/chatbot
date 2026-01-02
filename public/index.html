@@ -2,19 +2,20 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>MIT FGC Chatbot Overlay</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
   <style>
+    /* ===== RESET ===== */
     html, body {
       margin: 0;
       padding: 0;
       height: 100%;
-      overflow: hidden;
       font-family: Arial, sans-serif;
+      overflow: hidden;
     }
 
-    /* ===== BACKGROUND WEBSITE ===== */
+    /* ===== BACKGROUND: OFFICIAL SITE ===== */
     iframe {
       position: fixed;
       top: 0;
@@ -25,19 +26,24 @@
       z-index: 1;
     }
 
-    /* ===== CHATBOT TOGGLE ===== */
+    /* ===== FLOATING CHAT BUTTON (CIRCLE) ===== */
     #chat-toggle {
       position: fixed;
       bottom: 20px;
       right: 20px;
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
       background: #004aad;
-      color: white;
-      padding: 14px 18px;
-      border-radius: 999px;
+      color: #fff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 24px;
       cursor: pointer;
-      font-weight: bold;
       z-index: 9999;
       box-shadow: 0 6px 20px rgba(0,0,0,0.35);
+      user-select: none;
     }
 
     /* ===== CHATBOX ===== */
@@ -47,7 +53,7 @@
       right: 20px;
       width: 340px;
       max-height: 520px;
-      background: white;
+      background: #fff;
       border-radius: 14px;
       display: flex;
       flex-direction: column;
@@ -56,79 +62,108 @@
       animation: fadeUp 0.25s ease;
     }
 
-    .hidden { display: none; }
+    .hidden {
+      display: none;
+    }
 
     @keyframes fadeUp {
       from { transform: translateY(20px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+      to   { transform: translateY(0); opacity: 1; }
     }
 
+    /* ===== HEADER ===== */
     #chat-header {
       background: #004aad;
-      color: white;
-      padding: 12px;
-      font-weight: bold;
+      color: #fff;
+      padding: 12px 14px;
       display: flex;
       justify-content: space-between;
+      align-items: center;
+      border-radius: 14px 14px 0 0;
+      font-weight: bold;
     }
 
     #close-chat {
       cursor: pointer;
+      font-size: 18px;
     }
 
+    /* ===== MESSAGES ===== */
     #messages {
       flex: 1;
-      padding: 10px;
+      padding: 12px;
       overflow-y: auto;
       font-size: 14px;
+      background: #fafafa;
     }
 
     .msg {
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       padding: 8px 10px;
       border-radius: 10px;
       max-width: 85%;
+      line-height: 1.4;
     }
 
     .user {
       background: #004aad;
-      color: white;
+      color: #fff;
       margin-left: auto;
     }
 
     .bot {
-      background: #f1f1f1;
+      background: #eaeaea;
+      color: #000;
     }
 
+    /* ===== INPUT ===== */
     #chat-input {
       display: flex;
       border-top: 1px solid #ddd;
+      background: #fff;
     }
 
     #input {
       flex: 1;
-      padding: 10px;
       border: none;
+      padding: 10px;
       outline: none;
     }
 
     #send-btn {
-      background: #004aad;
-      color: white;
       border: none;
+      background: #004aad;
+      color: #fff;
       padding: 0 16px;
+      cursor: pointer;
+    }
+
+    /* ===== MOBILE ===== */
+    @media (max-width: 600px) {
+      #chatbox {
+        right: 10px;
+        left: 10px;
+        width: auto;
+        bottom: 90px;
+      }
+
+      #chat-toggle {
+        right: 16px;
+        bottom: 16px;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- OFFICIAL WEBSITE IN BACKGROUND -->
+  <!-- OFFICIAL SITE IN BACKGROUND -->
   <iframe src="https://mitfgc.in"></iframe>
 
-  <!-- CHATBOT OVERLAY -->
-  <div id="chat-toggle">💬 Ask MIT FGC</div>
+  <!-- CHAT BUTTON -->
+  <div id="chat-toggle">💬</div>
 
+  <!-- CHAT WINDOW -->
   <div id="chatbox" class="hidden">
     <div id="chat-header">
       MIT FGC Assistant
@@ -144,18 +179,26 @@
   </div>
 
   <script>
-    const toggle = document.getElementById("chat-toggle");
-    const chatbox = document.getElementById("chatbox");
-    const closeBtn = document.getElementById("close-chat");
-    const messages = document.getElementById("messages");
-    const input = document.getElementById("input");
-    const sendBtn = document.getElementById("send-btn");
+    const toggleBtn = document.getElementById("chat-toggle");
+    const chatbox   = document.getElementById("chatbox");
+    const closeBtn  = document.getElementById("close-chat");
+    const messages  = document.getElementById("messages");
+    const input     = document.getElementById("input");
+    const sendBtn   = document.getElementById("send-btn");
 
-    toggle.onclick = () => chatbox.classList.toggle("hidden");
-    closeBtn.onclick = () => chatbox.classList.add("hidden");
+    /* ===== TOGGLE OPEN/CLOSE (SAME BUTTON) ===== */
+    toggleBtn.addEventListener("click", () => {
+      chatbox.classList.toggle("hidden");
+    });
 
-    sendBtn.onclick = send;
-    input.addEventListener("keypress", e => e.key === "Enter" && send());
+    closeBtn.addEventListener("click", () => {
+      chatbox.classList.add("hidden");
+    });
+
+    sendBtn.addEventListener("click", send);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter") send();
+    });
 
     function send() {
       const text = input.value.trim();
@@ -169,9 +212,9 @@
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ message: text })
       })
-      .then(r => r.json())
-      .then(d => {
-        messages.innerHTML += `<div class="msg bot">${d.reply}</div>`;
+      .then(res => res.json())
+      .then(data => {
+        messages.innerHTML += `<div class="msg bot">${data.reply}</div>`;
         messages.scrollTop = messages.scrollHeight;
       });
     }
