@@ -2,57 +2,27 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>MIT First Grade College</title>
+  <title>MIT FGC Chatbot Overlay</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <!-- BASIC RESET -->
   <style>
-    * {
+    html, body {
       margin: 0;
       padding: 0;
-      box-sizing: border-box;
+      height: 100%;
+      overflow: hidden;
+      font-family: Arial, sans-serif;
     }
 
-    body {
-      font-family: Arial, Helvetica, sans-serif;
-      min-height: 100vh;
-      background: 
-        linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
-        url("https://mitfgc.in/wp-content/uploads/2023/06/college-banner.jpg");
-      background-size: cover;
-      background-position: center;
-      background-attachment: fixed;
-      color: white;
-    }
-
-    /* ===== PAGE CONTENT ===== */
-    .hero {
-      min-height: 100vh;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-      align-items: center;
-      text-align: center;
-      padding: 20px;
-    }
-
-    .hero h1 {
-      font-size: 42px;
-      margin-bottom: 10px;
-      letter-spacing: 1px;
-    }
-
-    .hero h2 {
-      font-size: 22px;
-      font-weight: normal;
-      margin-bottom: 20px;
-    }
-
-    .hero p {
-      max-width: 700px;
-      font-size: 16px;
-      line-height: 1.6;
-      opacity: 0.95;
+    /* ===== BACKGROUND WEBSITE ===== */
+    iframe {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      border: none;
+      z-index: 1;
     }
 
     /* ===== CHATBOT TOGGLE ===== */
@@ -61,18 +31,13 @@
       bottom: 20px;
       right: 20px;
       background: #004aad;
-      color: #fff;
+      color: white;
       padding: 14px 18px;
       border-radius: 999px;
       cursor: pointer;
       font-weight: bold;
-      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
       z-index: 9999;
-      transition: transform 0.2s ease;
-    }
-
-    #chat-toggle:hover {
-      transform: scale(1.05);
+      box-shadow: 0 6px 20px rgba(0,0,0,0.35);
     }
 
     /* ===== CHATBOX ===== */
@@ -82,8 +47,7 @@
       right: 20px;
       width: 340px;
       max-height: 520px;
-      background: #ffffff;
-      color: #000;
+      background: white;
       border-radius: 14px;
       display: flex;
       flex-direction: column;
@@ -92,9 +56,7 @@
       animation: fadeUp 0.25s ease;
     }
 
-    .hidden {
-      display: none;
-    }
+    .hidden { display: none; }
 
     @keyframes fadeUp {
       from { transform: translateY(20px); opacity: 0; }
@@ -104,32 +66,28 @@
     #chat-header {
       background: #004aad;
       color: white;
-      padding: 12px 14px;
+      padding: 12px;
       font-weight: bold;
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      border-radius: 14px 14px 0 0;
     }
 
     #close-chat {
       cursor: pointer;
-      font-size: 18px;
     }
 
     #messages {
       flex: 1;
-      padding: 12px;
+      padding: 10px;
       overflow-y: auto;
       font-size: 14px;
     }
 
     .msg {
-      margin-bottom: 10px;
+      margin-bottom: 8px;
       padding: 8px 10px;
       border-radius: 10px;
       max-width: 85%;
-      line-height: 1.4;
     }
 
     .user {
@@ -140,7 +98,6 @@
 
     .bot {
       background: #f1f1f1;
-      color: #000;
     }
 
     #chat-input {
@@ -150,8 +107,8 @@
 
     #input {
       flex: 1;
-      border: none;
       padding: 10px;
+      border: none;
       outline: none;
     }
 
@@ -160,64 +117,16 @@
       color: white;
       border: none;
       padding: 0 16px;
-      cursor: pointer;
-    }
-
-    /* ===== TYPING DOTS ===== */
-    .typing {
-      padding: 8px 12px;
-      display: flex;
-      gap: 6px;
-    }
-
-    .typing span {
-      width: 6px;
-      height: 6px;
-      background: #999;
-      border-radius: 50%;
-      animation: blink 1.4s infinite both;
-    }
-
-    .typing span:nth-child(2) { animation-delay: .2s; }
-    .typing span:nth-child(3) { animation-delay: .4s; }
-
-    @keyframes blink {
-      0% { opacity: .2; }
-      20% { opacity: 1; }
-      100% { opacity: .2; }
-    }
-
-    /* ===== MOBILE ===== */
-    @media (max-width: 600px) {
-      #chatbox {
-        right: 10px;
-        left: 10px;
-        width: auto;
-        bottom: 80px;
-      }
-
-      #chat-toggle {
-        right: 10px;
-        bottom: 15px;
-      }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- MAIN WEBSITE CONTENT -->
-  <section class="hero">
-    <h1>MIT First Grade College</h1>
-    <h2>Mysuru • Affiliated to University of Mysore</h2>
-    <p>
-      MIT First Grade College provides quality undergraduate education with
-      experienced faculty, modern infrastructure, and a disciplined academic
-      environment focused on student success.
-    </p>
-  </section>
+  <!-- OFFICIAL WEBSITE IN BACKGROUND -->
+  <iframe src="https://mitfgc.in"></iframe>
 
-  <!-- CHATBOT -->
+  <!-- CHATBOT OVERLAY -->
   <div id="chat-toggle">💬 Ask MIT FGC</div>
 
   <div id="chatbox" class="hidden">
@@ -228,17 +137,12 @@
 
     <div id="messages"></div>
 
-    <div id="typing" class="typing hidden">
-      <span></span><span></span><span></span>
-    </div>
-
     <div id="chat-input">
       <input id="input" placeholder="Ask your question..." />
       <button id="send-btn">Send</button>
     </div>
   </div>
 
-  <!-- CHAT SCRIPT -->
   <script>
     const toggle = document.getElementById("chat-toggle");
     const chatbox = document.getElementById("chatbox");
@@ -246,7 +150,6 @@
     const messages = document.getElementById("messages");
     const input = document.getElementById("input");
     const sendBtn = document.getElementById("send-btn");
-    const typing = document.getElementById("typing");
 
     toggle.onclick = () => chatbox.classList.toggle("hidden");
     closeBtn.onclick = () => chatbox.classList.add("hidden");
@@ -260,7 +163,6 @@
 
       messages.innerHTML += `<div class="msg user">${text}</div>`;
       input.value = "";
-      typing.classList.remove("hidden");
 
       fetch("/api/chat", {
         method: "POST",
@@ -269,7 +171,6 @@
       })
       .then(r => r.json())
       .then(d => {
-        typing.classList.add("hidden");
         messages.innerHTML += `<div class="msg bot">${d.reply}</div>`;
         messages.scrollTop = messages.scrollHeight;
       });
