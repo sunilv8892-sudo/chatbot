@@ -1,34 +1,60 @@
-const toggle = document.getElementById("chat-toggle");
-const chatbox = document.getElementById("chatbox");
-const closeBtn = document.getElementById("close-chat");
-const messages = document.getElementById("messages");
-const input = document.getElementById("input");
-const sendBtn = document.getElementById("send-btn");
-const typing = document.getElementById("typing");
+<script>
+  const toggleBtn = document.getElementById("chat-toggle");
+  const chatbox   = document.getElementById("chatbox");
+  const closeBtn  = document.getElementById("close-chat");
+  const messages  = document.getElementById("messages");
+  const input     = document.getElementById("input");
+  const sendBtn   = document.getElementById("send-btn");
 
-toggle.onclick = () => chatbox.classList.toggle("hidden");
-closeBtn.onclick = () => chatbox.classList.add("hidden");
+  let isOpen = false;
 
-sendBtn.onclick = send;
-input.addEventListener("keypress", e => e.key === "Enter" && send());
+  function openChat() {
+    chatbox.classList.remove("hidden");
+    isOpen = true;
+  }
 
-function send() {
-  const text = input.value.trim();
-  if (!text) return;
+  function closeChat() {
+    chatbox.classList.add("hidden");
+    isOpen = false;
+  }
 
-  messages.innerHTML += `<div class="msg user">${text}</div>`;
-  input.value = "";
-  typing.classList.remove("hidden");
-
-  fetch("/api/chat", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ message: text })
-  })
-  .then(r => r.json())
-  .then(d => {
-    typing.classList.add("hidden");
-    messages.innerHTML += `<div class="msg bot">${d.reply}</div>`;
-    messages.scrollTop = messages.scrollHeight;
+  // 🔵 SAME BUTTON TO OPEN + CLOSE
+  toggleBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    if (isOpen) {
+      closeChat();
+    } else {
+      openChat();
+    }
   });
-}
+
+  // ❌ CLOSE BUTTON
+  closeBtn.addEventListener("click", (e) => {
+    e.stopPropagation();
+    closeChat();
+  });
+
+  sendBtn.addEventListener("click", send);
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") send();
+  });
+
+  function send() {
+    const text = input.value.trim();
+    if (!text) return;
+
+    messages.innerHTML += `<div class="msg user">${text}</div>`;
+    input.value = "";
+
+    fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text })
+    })
+    .then(res => res.json())
+    .then(data => {
+      messages.innerHTML += `<div class="msg bot">${data.reply}</div>`;
+      messages.scrollTop = messages.scrollHeight;
+    });
+  }
+</script>
