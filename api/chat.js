@@ -82,53 +82,65 @@ export default async function handler(req, res) {
       });
     }
 
-    /* =========================
-       🤖 GEMINI AI FALLBACK (ONLY IF KB FAILS)
-    ========================= */
+ /* =========================
+   🤖 GEMINI AI FALLBACK (REAL, HUMAN)
+========================= */
 
-    const geminiRes = await fetch(
-      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
-      {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          contents: [
+const geminiRes = await fetch(
+  `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
+  {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({
+      contents: [
+        {
+          parts: [
             {
-              parts: [
-                {
-                  text: `
-You are an official college assistant for MIT First Grade College, Mysuru.
+              text: `
+You are an AI assistant helping students who are asking about MIT First Grade College, Mysuru.
 
-RULES:
-- Answer politely and clearly
-- Stay within college-related information
-- If unsure, guide user to admissions/contact
-- Do NOT hallucinate facts
-- Tone should be friendly and reassuring
+IMPORTANT BEHAVIOUR RULES:
+- Answer naturally, like a real person
+- Do NOT refuse questions
+- Do NOT say "I don't have information"
+- Do NOT hallucinate specific facilities or events
+- If exact details are unknown, speak generally and honestly
+- It is okay to say things like "generally", "students usually feel", "from an academic point of view"
 
-College info:
-MIT First Grade College, Mysuru
-Courses: BCA, BBA, B.Com
-Admissions: https://mitfgc.in/admission/
-Contact: https://mitfgc.in/contact-us/
+You may talk about:
+- Campus environment
+- Student experience
+- Academic atmosphere
+- Faculty support
+- General college life in Indian degree colleges
+
+KNOWN FACTS (ONLY THESE ARE GUARANTEED):
+- College: MIT First Grade College, Mysuru
+- Courses: BCA, BBA, B.Com
+- Affiliated to University of Mysore
+- Disciplined academic environment
+
+If the question is opinion-based (e.g. campus life, enjoyment, stress, culture),
+answer thoughtfully without exaggeration.
 
 User question:
 ${message}
 `
-                }
-              ]
             }
           ]
-        })
-      }
-    );
+        }
+      ]
+    })
+  }
+);
 
-    const data = await geminiRes.json();
-    const aiReply =
-      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-      "For accurate information, please contact the college office.";
+const data = await geminiRes.json();
 
-    return res.json({ reply: aiReply });
+const aiReply =
+  data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+  "College life usually depends on how students engage with academics, friends, and activities.";
+
+return res.json({ reply: aiReply });
 
   } catch (err) {
     console.error("CHATBOT ERROR:", err);
@@ -138,3 +150,4 @@ ${message}
     });
   }
 }
+
