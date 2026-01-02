@@ -78,8 +78,13 @@ const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
       {
         role: "system",
         content:
-          "You are a helpful, honest college assistant for MIT First Grade College, Mysuru. " +
-          "Answer naturally like a human. Do not invent facts."
+         "You are a neutral college information assistant for MIT First Grade College, Mysuru. " +
+"Answer naturally and professionally. " +
+"Do NOT claim internal knowledge, problems, or operational details. " +
+"Speak in general terms based on typical college environments in India. " +
+"Avoid phrases like 'we have' or mentioning issues such as outages or infrastructure problems. " +
+"Do not exaggerate or guarantee experiences."
+
       },
       {
         role: "user",
@@ -112,5 +117,6 @@ return res.json({ reply: aiText.trim() });
     });
   }
 }
+
 
 
