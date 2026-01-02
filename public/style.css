@@ -1,119 +1,61 @@
-/* Reset */
-html, body {
-  margin: 0;
-  padding: 0;
-  height: 100%;
+body {
+  font-family: Arial, sans-serif;
 }
 
-/* Iframe (real website) */
-#college-site {
-  width: 100%;
-  height: 100vh;
-  border: none;
-}
-
-/* Floating chatbot button */
 #chat-toggle {
   position: fixed;
   bottom: 20px;
   right: 20px;
-  width: 64px;
-  height: 64px;
-  background: #002147;
+  background: #004aad;
   color: white;
-  border-radius: 50%;
-  font-size: 26px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  padding: 14px 18px;
+  border-radius: 50px;
   cursor: pointer;
-  z-index: 9999;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 15px rgba(0,0,0,0.3);
 }
 
-/* Chat window */
 #chatbox {
   position: fixed;
-  bottom: 100px;
+  bottom: 90px;
   right: 20px;
-  width: 340px;
-  height: 420px;
+  width: 320px;
   background: white;
   border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.4);
-  display: none;
-  flex-direction: column;
-  z-index: 9999;
-}
-
-#chat-header {
-  background: #002147;
-  color: white;
-  padding: 10px;
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  box-shadow: 0 0 20px rgba(0,0,0,0.3);
+  animation: pop 0.3s ease;
 }
 
-#chat-header span {
-  cursor: pointer;
+.hidden {
+  display: none;
+}
+
+@keyframes pop {
+  from { transform: scale(0.8); opacity: 0; }
+  to { transform: scale(1); opacity: 1; }
 }
 
 #messages {
-  flex: 1;
   padding: 10px;
+  height: 240px;
   overflow-y: auto;
 }
 
 .msg {
+  margin: 8px 0;
   padding: 8px;
-  margin: 6px 0;
   border-radius: 10px;
-  max-width: 80%;
 }
 
-.user {
-  background: #002147;
-  color: white;
-  margin-left: auto;
+.user { background: #004aad; color: white; margin-left: auto; }
+.bot { background: #eee; }
+
+.typing span {
+  animation: blink 1.4s infinite both;
 }
-
-.bot {
-  background: #e0e0e0;
-}
-
-#chat-input {
-  display: flex;
-  border-top: 1px solid #ddd;
-}
-
-#input {
-  flex: 1;
-  padding: 8px;
-  border: none;
-}
-
-#send-btn {
-  padding: 8px 12px;
-  border: none;
-  background: #002147;
-  color: white;
-  cursor: pointer;
-}
-
-/* Mobile */
-@media (max-width: 600px) {
-  #chat-toggle {
-    width: 56px;
-    height: 56px;
-    font-size: 24px;
-  }
-
-  #chatbox {
-    width: 100%;
-    right: 0;
-    bottom: 0;
-    height: 60%;
-    border-radius: 12px 12px 0 0;
-  }
+@keyframes blink {
+  0% { opacity: .2; }
+  20% { opacity: 1; }
+  100% { opacity: .2; }
 }
