@@ -1,56 +1,11 @@
-Skip to content
-Navigation Menu
-sunilv8892-sudo
-chatbot
-
-Type / to search
-Code
-Issues
-Pull requests
-Actions
-Projects
-Wiki
-Security
-Insights
-Settings
-Commit ab6e3bd
-sunilv8892-sudo
-sunilv8892-sudo
-authored
-yesterday
-·
-·
-Verified
-Update chat.js
-main
-1 parent 
-75bc11c
- commit 
-ab6e3bd
-File tree
-Filter files…
-api
-chat.js
-1 file changed
-+250
--255
-lines changed
-Search within code
- 
-‎api/chat.js‎
-+250
--255
-Lines changed: 250 additions & 255 deletions
-Original file line number	Diff line number	Diff line change
-@@ -3,285 +3,280 @@ export default function handler(req, res) {
-    return res.status(405).json({ reply: "Method not allowed" });
-  }
+return res.status(405).json({ reply: "Method not allowed" });
+}
 
   const raw = (req.body.message || "").trim();
   const raw = (req.body.message || "").toLowerCase().trim();
-  if (!raw) {
-    return res.json({ reply: "Please type your question." });
-  }
+if (!raw) {
+return res.json({ reply: "Please type your question." });
+}
 
   const q = raw.toLowerCase();
   // Normalize input heavily
@@ -59,10 +14,10 @@ Original file line number	Diff line number	Diff line change
     .replace(/\s+/g, " ")
     .trim();
 
-  /* =====================================================
+/* =====================================================
      FULL STRUCTURED KNOWLEDGE BASE (ALL YOUR INFO)
      COMMON HELPERS
-  ===================================================== */
+ ===================================================== */
 
   const KB = {
     contact: {
@@ -74,12 +29,15 @@ Original file line number	Diff line number	Diff line change
 🕘 Office Hours: Monday to Saturday, 9:30 AM – 4:30 PM
       `.trim()
     },
+
     trust: {
       keywords: ["trust", "management", "maharaja", "founder"],
       answer: `
 MIT First Grade College is managed by **Maharaja Education Trust**.
+
 The Trust was founded by eminent academicians with extensive teaching and research experience.
 All trustees hold doctoral degrees and have held leadership positions at national and international levels.
+
 The Trust manages:
 • Schools
 • PU Colleges
@@ -91,32 +49,41 @@ The Trust manages:
 • Pharmacy College
       `.trim()
     },
+
     courses: {
       keywords: ["course", "courses", "program", "degree", "offer"],
       answer: `
 🎓 **Courses Offered at MIT First Grade College**
+
 Undergraduate Programs:
 • BCA – Bachelor of Computer Applications
 • BBA – Bachelor of Business Administration
 • B.Com – Bachelor of Commerce
+
 All programs follow the University of Mysore curriculum.
       `.trim()
     },
+
     duration: {
       keywords: ["duration", "years", "semester", "how long"],
       answer: `
 ⏳ **Course Duration**
+
 All undergraduate programs are:
 • 3 years duration
 • 6 semesters (6 months each)
+
 Maximum duration allowed to complete a program is **6 years**, as per University of Mysore norms.
       `.trim()
     },
+
     bca: {
       keywords: ["bca", "computer application", "computer course"],
       answer: `
 🎓 **BCA – Bachelor of Computer Applications**
+
 BCA is an undergraduate program focused on computer applications.
+
 Key outcomes:
 • IT and software careers
 • Banking and management roles
@@ -125,25 +92,30 @@ Key outcomes:
 • Higher studies such as MCA and M.Sc Computer Science
       `.trim()
     },
+
     bcaEligibility: {
       keywords: ["bca eligibility", "eligible for bca"],
       answer: `
 ✅ **BCA Eligibility**
+
 Candidates must have:
 • 10+2 / PUC with Mathematics, Computer Science, Business Mathematics, or Accountancy
 OR
 • 3-year diploma after SSLC in Computer Science Engineering / Information Science Engineering
       `.trim()
     },
+
     bcom: {
       keywords: ["bcom", "b.com", "commerce"],
       answer: `
 🎓 **B.Com – Bachelor of Commerce**
+
 B.Com focuses on:
 • Accounting
 • Finance
 • Taxation
 • Management
+
 Career options include:
 • Banking & Finance
 • Accounting
@@ -151,18 +123,23 @@ Career options include:
 • MBA / M.Com
       `.trim()
     },
+
     bcomEligibility: {
       keywords: ["bcom eligibility", "b.com eligibility"],
       answer: `
 ✅ **B.Com Eligibility**
+
 Candidates who have passed 10+2 in any discipline are eligible.
+
 Diploma holders and job-oriented course candidates may be eligible for lateral entry as per university norms.
       `.trim()
     },
+
     bba: {
       keywords: ["bba", "business administration", "management course"],
       answer: `
 🎓 **BBA – Bachelor of Business Administration**
+
 BBA focuses on:
 • Management principles
 • Leadership skills
@@ -170,10 +147,12 @@ BBA focuses on:
 • Business administration
       `.trim()
     },
+
     departments: {
       keywords: ["department", "departments", "streams"],
       answer: `
 🏫 **Academic Departments**
+
 • Computer Science (BCA)
 • Commerce (B.Com)
 • Management Studies (BBA)
@@ -182,55 +161,68 @@ BBA focuses on:
 • Commerce & Taxation
       `.trim()
     },
+
     principal: {
       keywords: ["principal", "head", "dr chandrajit"],
       answer: `
 🎓 **Principal – Dr. Chandrajit Mohan**
+
 Qualifications:
 • MCA, KSET, Ph.D
+
 Experience:
 • 18+ years total
 • 15 years teaching
 • 3 years industry
 • 12 years research
+
 Academic Contributions:
 • 25 research publications
 • 3 textbooks
 • 2 patents
 • 2 projects
 • Research guide for 5 scholars
+
 Specialization:
 • Computer Vision
 • Machine Learning
 • Management Information Systems
 • Programming Languages
+
 Academic Memberships:
 • Board of Studies – Computer Science
 • College Development Advisory Committee, University of Mysore
       `.trim()
     },
+
     faculty: {
       keywords: ["faculty", "teachers", "staff", "experienced"],
       answer: `
 👨‍🏫 **Faculty Overview**
+
 MIT First Grade College has qualified and experienced faculty across departments.
+
 Computer Science faculty specialize in:
 • Programming
 • Data Structures
 • AI & Machine Learning
 • Networking
 • Operating Systems
+
 Commerce faculty specialize in:
 • Accounting
 • Taxation
 • Finance
+
 English and Political Science departments have senior faculty with decades of experience.
       `.trim()
     },
+
     csFaculty: {
       keywords: ["computer science faculty", "bca faculty"],
       answer: `
 💻 **Computer Science Faculty**
+
 • Arvind G – MCA, PGDSD, Ph.D – 18+ Years – Networks, Python, AI, ML
 • Abhilasha C – M.Sc, KSET – C, C++, OS, Python
 • Yashaswini B – MCA – C, Python, Data Structures
@@ -240,36 +232,42 @@ English and Political Science departments have senior faculty with decades of ex
 • Bhoomika M M – M.Sc – Java, Data Analytics
       `.trim()
     },
+
     resources: {
       keywords: ["notes", "study material", "pdf", "question paper"],
       answer: `
 📚 **E-Resources**
+
 Study materials, notes, and previous question papers are available at:
+
 https://drive.google.com/drive/folders/1bTRaNQdcS5d9Bdxwzi9s5_R8QJZSZvRD
       `.trim()
     },
+
     environment: {
       keywords: ["good college", "safe", "environment", "worth", "parent"],
       answer: `
 🏫 **Campus Environment**
+
 MIT First Grade College provides:
 • Disciplined academic atmosphere
 • Safe and student-friendly campus
 • Focus on academic excellence and mentoring
+
 It is suitable for both students and parents seeking quality education.
       `.trim()
   function hasAny(words) {
     for (let w of words) {
       if (q.includes(w)) return true;
-    }
+}
   };
     return false;
   }
 
-  /* =====================================================
+/* =====================================================
      INTENT MATCHING (SCOPED, NOT DUMPING)
      LOCATION / ADDRESS (YOU COMPLAINED ABOUT THIS)
-  ===================================================== */
+ ===================================================== */
 
   const matchedSections = [];
   if (
@@ -298,6 +296,7 @@ It is suitable for both students and parents seeking quality education.
   /* =====================================================
      CONTACT / PHONE / EMAIL
   ===================================================== */
+
   if (
     hasAny([
       "contact", "phone", "call", "number", "mobile",
@@ -312,9 +311,11 @@ It is suitable for both students and parents seeking quality education.
         "🕘 Office Hours: Monday to Saturday, 9:30 AM – 4:30 PM"
     });
   }
+
   /* =====================================================
      ADMISSION (ALL POSSIBLE FORMS)
   ===================================================== */
+
   if (
     hasAny([
       "admission", "admit", "apply", "join", "joining",
@@ -337,9 +338,11 @@ It is suitable for both students and parents seeking quality education.
         "• Passport-size photographs"
     });
   }
+
   /* =====================================================
      COURSES OFFERED
   ===================================================== */
+
   if (
     hasAny([
       "courses", "course", "program", "programs",
@@ -356,9 +359,11 @@ It is suitable for both students and parents seeking quality education.
         "All courses are undergraduate programs."
     });
   }
+
   /* =====================================================
      BCA
   ===================================================== */
+
   if (hasAny(["bca", "computer application", "computer course", "it course"])) {
     return res.json({
       reply:
@@ -370,9 +375,11 @@ It is suitable for both students and parents seeking quality education.
         "• M.Sc Computer Science"
     });
   }
+
   /* =====================================================
      BBA
   ===================================================== */
+
   if (hasAny(["bba", "business administration", "management course"])) {
     return res.json({
       reply:
@@ -380,9 +387,11 @@ It is suitable for both students and parents seeking quality education.
         "It focuses on management, leadership, entrepreneurship, and business administration."
     });
   }
+
   /* =====================================================
      B.COM
   ===================================================== */
+
   if (hasAny(["bcom", "b com", "b.com", "commerce"])) {
     return res.json({
       reply:
@@ -390,12 +399,12 @@ It is suitable for both students and parents seeking quality education.
         "It focuses on accounting, finance, taxation, and management.\n\n" +
         "Career options include banking, finance, CA, CS, MBA, and M.Com."
     });
-  }
+}
 
-  /* =====================================================
+/* =====================================================
      RESPONSE
      ELIGIBILITY
-  ===================================================== */
+ ===================================================== */
 
   if (matchedSections.length > 0) {
   if (
@@ -404,18 +413,19 @@ It is suitable for both students and parents seeking quality education.
       "criteria", "who can apply", "requirements"
     ])
   ) {
-    return res.json({
+return res.json({
       reply: matchedSections.join("\n\n")
       reply:
         "✅ Eligibility Criteria:\n\n" +
         "• BCA: 10+2 with Maths / Computer Science / Accountancy OR relevant diploma\n" +
         "• BBA & B.Com: 10+2 in any discipline (as per University norms)"
-    });
-  }
+});
+}
 
   /* =====================================================
      DURATION
   ===================================================== */
+
   if (hasAny(["duration", "how long", "years", "semester"])) {
     return res.json({
       reply:
@@ -424,9 +434,11 @@ It is suitable for both students and parents seeking quality education.
         "Maximum duration allowed is 6 years as per University of Mysore norms."
     });
   }
+
   /* =====================================================
      FACULTY / PRINCIPAL
   ===================================================== */
+
   if (
     hasAny([
       "faculty", "teachers", "staff",
@@ -444,9 +456,11 @@ It is suitable for both students and parents seeking quality education.
         "The college has experienced and qualified faculty across all departments."
     });
   }
+
   /* =====================================================
      DEPARTMENTS
   ===================================================== */
+
   if (hasAny(["department", "departments", "streams"])) {
     return res.json({
       reply:
@@ -459,9 +473,11 @@ It is suitable for both students and parents seeking quality education.
         "• Commerce & Taxation"
     });
   }
+
   /* =====================================================
      NOTES / NOTS / PDF / STUDY MATERIAL
   ===================================================== */
+
   if (
     hasAny([
       "notes", "nots", "note", "pdf",
@@ -476,9 +492,11 @@ It is suitable for both students and parents seeking quality education.
         "https://drive.google.com/drive/folders/1bTRaNQdcS5d9Bdxwzi9s5_R8QJZSZvRD"
     });
   }
+
   /* =====================================================
      GOOD COLLEGE / PARENT QUESTIONS
   ===================================================== */
+
   if (
     hasAny([
       "good college", "worth", "safe",
@@ -492,9 +510,11 @@ It is suitable for both students and parents seeking quality education.
         "it is a good choice for students and parents."
     });
   }
+
   /* =====================================================
      FEES (SAFE ANSWER)
   ===================================================== */
+
   if (hasAny(["fees", "fee structure", "cost"])) {
     return res.json({
       reply:
@@ -502,19 +522,14 @@ It is suitable for both students and parents seeking quality education.
         "For accurate and updated fee details, students are advised to contact the college office directly."
     });
   }
+
   /* =====================================================
      FINAL FALLBACK
   ===================================================== */
-  return res.json({
-    reply:
+
+return res.json({
+reply:
       "I can help you with admissions, courses, eligibility, faculty details, departments, study resources, campus environment, or contact information. Please ask about one of these."
       "I can help you with admissions, courses (BCA, BBA, B.Com), eligibility, faculty, departments, study materials, location, contact details, and general college information."
-  });
+});
 }
-0 commit comments
-Comments
-0
- (0)
-Comment
-Copied!
-There are no files selected for viewing
