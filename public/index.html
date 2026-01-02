@@ -1,31 +1,280 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-  <title>MIT FGC Chatbot</title>
-  <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>MIT First Grade College</title>
+
+  <!-- BASIC RESET -->
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: Arial, Helvetica, sans-serif;
+      min-height: 100vh;
+      background: 
+        linear-gradient(rgba(0,0,0,0.55), rgba(0,0,0,0.55)),
+        url("https://mitfgc.in/wp-content/uploads/2023/06/college-banner.jpg");
+      background-size: cover;
+      background-position: center;
+      background-attachment: fixed;
+      color: white;
+    }
+
+    /* ===== PAGE CONTENT ===== */
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      text-align: center;
+      padding: 20px;
+    }
+
+    .hero h1 {
+      font-size: 42px;
+      margin-bottom: 10px;
+      letter-spacing: 1px;
+    }
+
+    .hero h2 {
+      font-size: 22px;
+      font-weight: normal;
+      margin-bottom: 20px;
+    }
+
+    .hero p {
+      max-width: 700px;
+      font-size: 16px;
+      line-height: 1.6;
+      opacity: 0.95;
+    }
+
+    /* ===== CHATBOT TOGGLE ===== */
+    #chat-toggle {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      background: #004aad;
+      color: #fff;
+      padding: 14px 18px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: bold;
+      box-shadow: 0 6px 20px rgba(0,0,0,0.4);
+      z-index: 9999;
+      transition: transform 0.2s ease;
+    }
+
+    #chat-toggle:hover {
+      transform: scale(1.05);
+    }
+
+    /* ===== CHATBOX ===== */
+    #chatbox {
+      position: fixed;
+      bottom: 90px;
+      right: 20px;
+      width: 340px;
+      max-height: 520px;
+      background: #ffffff;
+      color: #000;
+      border-radius: 14px;
+      display: flex;
+      flex-direction: column;
+      z-index: 9999;
+      box-shadow: 0 12px 35px rgba(0,0,0,0.45);
+      animation: fadeUp 0.25s ease;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    @keyframes fadeUp {
+      from { transform: translateY(20px); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    #chat-header {
+      background: #004aad;
+      color: white;
+      padding: 12px 14px;
+      font-weight: bold;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-radius: 14px 14px 0 0;
+    }
+
+    #close-chat {
+      cursor: pointer;
+      font-size: 18px;
+    }
+
+    #messages {
+      flex: 1;
+      padding: 12px;
+      overflow-y: auto;
+      font-size: 14px;
+    }
+
+    .msg {
+      margin-bottom: 10px;
+      padding: 8px 10px;
+      border-radius: 10px;
+      max-width: 85%;
+      line-height: 1.4;
+    }
+
+    .user {
+      background: #004aad;
+      color: white;
+      margin-left: auto;
+    }
+
+    .bot {
+      background: #f1f1f1;
+      color: #000;
+    }
+
+    #chat-input {
+      display: flex;
+      border-top: 1px solid #ddd;
+    }
+
+    #input {
+      flex: 1;
+      border: none;
+      padding: 10px;
+      outline: none;
+    }
+
+    #send-btn {
+      background: #004aad;
+      color: white;
+      border: none;
+      padding: 0 16px;
+      cursor: pointer;
+    }
+
+    /* ===== TYPING DOTS ===== */
+    .typing {
+      padding: 8px 12px;
+      display: flex;
+      gap: 6px;
+    }
+
+    .typing span {
+      width: 6px;
+      height: 6px;
+      background: #999;
+      border-radius: 50%;
+      animation: blink 1.4s infinite both;
+    }
+
+    .typing span:nth-child(2) { animation-delay: .2s; }
+    .typing span:nth-child(3) { animation-delay: .4s; }
+
+    @keyframes blink {
+      0% { opacity: .2; }
+      20% { opacity: 1; }
+      100% { opacity: .2; }
+    }
+
+    /* ===== MOBILE ===== */
+    @media (max-width: 600px) {
+      #chatbox {
+        right: 10px;
+        left: 10px;
+        width: auto;
+        bottom: 80px;
+      }
+
+      #chat-toggle {
+        right: 10px;
+        bottom: 15px;
+      }
+    }
+  </style>
 </head>
+
 <body>
 
-<div id="chat-toggle">💬 Ask MIT FGC</div>
+  <!-- MAIN WEBSITE CONTENT -->
+  <section class="hero">
+    <h1>MIT First Grade College</h1>
+    <h2>Mysuru • Affiliated to University of Mysore</h2>
+    <p>
+      MIT First Grade College provides quality undergraduate education with
+      experienced faculty, modern infrastructure, and a disciplined academic
+      environment focused on student success.
+    </p>
+  </section>
 
-<div id="chatbox" class="hidden">
-  <div id="chat-header">
-    MIT FGC Assistant
-    <span id="close-chat">✖</span>
+  <!-- CHATBOT -->
+  <div id="chat-toggle">💬 Ask MIT FGC</div>
+
+  <div id="chatbox" class="hidden">
+    <div id="chat-header">
+      MIT FGC Assistant
+      <span id="close-chat">✖</span>
+    </div>
+
+    <div id="messages"></div>
+
+    <div id="typing" class="typing hidden">
+      <span></span><span></span><span></span>
+    </div>
+
+    <div id="chat-input">
+      <input id="input" placeholder="Ask your question..." />
+      <button id="send-btn">Send</button>
+    </div>
   </div>
 
-  <div id="messages"></div>
+  <!-- CHAT SCRIPT -->
+  <script>
+    const toggle = document.getElementById("chat-toggle");
+    const chatbox = document.getElementById("chatbox");
+    const closeBtn = document.getElementById("close-chat");
+    const messages = document.getElementById("messages");
+    const input = document.getElementById("input");
+    const sendBtn = document.getElementById("send-btn");
+    const typing = document.getElementById("typing");
 
-  <div id="typing" class="typing hidden">
-    <span></span><span></span><span></span>
-  </div>
+    toggle.onclick = () => chatbox.classList.toggle("hidden");
+    closeBtn.onclick = () => chatbox.classList.add("hidden");
 
-  <div id="chat-input">
-    <input id="input" placeholder="Ask your question..." />
-    <button id="send-btn">Send</button>
-  </div>
-</div>
+    sendBtn.onclick = send;
+    input.addEventListener("keypress", e => e.key === "Enter" && send());
 
-<script src="script.js"></script>
+    function send() {
+      const text = input.value.trim();
+      if (!text) return;
+
+      messages.innerHTML += `<div class="msg user">${text}</div>`;
+      input.value = "";
+      typing.classList.remove("hidden");
+
+      fetch("/api/chat", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ message: text })
+      })
+      .then(r => r.json())
+      .then(d => {
+        typing.classList.add("hidden");
+        messages.innerHTML += `<div class="msg bot">${d.reply}</div>`;
+        messages.scrollTop = messages.scrollHeight;
+      });
+    }
+  </script>
+
 </body>
 </html>
