@@ -1,244 +1,101 @@
-/* Top bar */
-.top-bar {
-  background: #002855;
-  color: #fff;
-  font-size: 13px;
-  padding: 6px 20px;
-  display: flex;
-  justify-content: space-between;
-}
-
-/* Header */
-.main-header {
-  background: #002147; /* MIT FGC dark blue */
-  color: white;
-  padding: 15px 40px;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-
-.main-header .logo {
-  font-size: 22px;
-  font-weight: bold;
-}
-
-.main-header nav a {
-  color: white;
-  margin-left: 18px;
-  text-decoration: none;
-  font-size: 14px;
-}
-
-/* Hero */
-.hero-section {
-  background: linear-gradient(
-      rgba(0, 32, 63, 0.6),
-      rgba(0, 32, 63, 0.6)
-    ),
-    url("https://mitfgc.in/wp-content/uploads/2022/09/college-banner.jpg");
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  height: 520px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  text-align: center;
-  color: white;
-}
-
-
-.hero-text h1 {
-  font-size: 42px;
-  font-weight: 700;
-  margin-bottom: 10px;
-}
-
-.hero-text p {
-  font-size: 16px;
-  letter-spacing: 0.5px;
-  margin-bottom: 25px;
-/* Reset */
 html, body {
   margin: 0;
   padding: 0;
   height: 100%;
-}
-
-.hero-text button {
-  background: #f4b400;
-/* Iframe (real website) */
-#college-site {
-  width: 100%;
-  height: 100vh;
-border: none;
-  padding: 12px 28px;
-  font-size: 14px;
-  font-weight: bold;
-  cursor: pointer;
-  border-radius: 2px;
-}
-
-
-/* Sections */
-.info-section {
-  padding: 40px 20px;
-  max-width: 900px;
-  margin: auto;
-  text-align: center;
-}
-
-.info-cards {
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  padding-bottom: 40px;
-}
-
-.card {
-  background: white;
-  padding: 20px;
-  width: 220px;
-  text-align: center;
-  border-radius: 6px;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
-}
-
-/* Footer */
-.footer {
-  background: #002855;
-  color: white;
-  text-align: center;
-  padding: 20px;
-  font-size: 13px;
-}
-body {
   font-family: Arial, sans-serif;
-  padding: 20px;
 }
 
-/* Floating chat button */
-/* Floating chatbot button */
+/* Background site */
+#college-site {
+  position: fixed;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  border: none;
+  z-index: 1;
+}
+
+/* Toggle button */
 #chat-toggle {
-position: fixed;
-bottom: 20px;
-right: 20px;
-  background: #004aad;
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
   width: 64px;
   height: 64px;
   background: #002147;
-color: white;
-  padding: 14px 18px;
-  border-radius: 30px;
-  font-size: 16px;
-  font-weight: bold;
-  border-radius: 50%;
+  color: white;
   font-size: 26px;
-display: flex;
-align-items: center;
-  gap: 8px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
   justify-content: center;
-cursor: pointer;
-  z-index: 1000;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  cursor: pointer;
   z-index: 9999;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
+  box-shadow: 0 4px 12px rgba(0,0,0,.4);
 }
 
-/* Chat window */
+/* Chatbox */
 #chatbox {
-position: fixed;
-  bottom: 90px;
+  position: fixed;
   bottom: 100px;
-right: 20px;
-  width: 320px;
+  right: 20px;
   width: 340px;
   height: 420px;
-background: white;
-border-radius: 10px;
-  box-shadow: 0 0 15px rgba(0,0,0,0.3);
-  display: flex;
-  box-shadow: 0 0 15px rgba(0,0,0,0.4);
+  background: white;
+  border-radius: 10px;
   display: none;
-flex-direction: column;
-  z-index: 1000;
+  flex-direction: column;
   z-index: 9999;
+  box-shadow: 0 0 15px rgba(0,0,0,.4);
 }
-
 
 #chat-header {
-  background: #004aad;
   background: #002147;
-color: white;
-padding: 10px;
-display: flex;
-justify-content: space-between;
-align-items: center;
-  border-radius: 10px 10px 0 0;
-}
-
-#chat-header span {
-cursor: pointer;
+  color: white;
+  padding: 10px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
 }
 
 #messages {
-  height: 220px;
   flex: 1;
-padding: 10px;
-overflow-y: auto;
-}
-@@ -172,7 +73,7 @@ body {
+  padding: 10px;
+  overflow-y: auto;
 }
 
 .user {
-  background: #004aad;
   background: #002147;
-color: white;
-margin-left: auto;
+  color: white;
+  margin: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  align-self: flex-end;
 }
-@@ -195,37 +96,24 @@ body {
+
+.bot {
+  background: #eee;
+  margin: 6px;
+  padding: 6px 10px;
+  border-radius: 6px;
+  align-self: flex-start;
+}
+
+#chat-input {
+  display: flex;
+  padding: 8px;
+  gap: 6px;
+}
+
+#input {
+  flex: 1;
+  padding: 6px;
+}
+
 #send-btn {
-padding: 8px 12px;
-border: none;
-  background: #004aad;
   background: #002147;
-color: white;
-cursor: pointer;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  cursor: pointer;
 }
-
-/* Mobile: circular but noticeable */
-/* Mobile */
-@media (max-width: 600px) {
-#chat-toggle {
-    width: 64px;
-    height: 64px;
-    padding: 0;
-    border-radius: 50%;
-    bottom: 20px;
-    right: 20px;
-    justify-content: center;
-    font-size: 26px;
-  }
-
-  /* Hide text on mobile, show only icon */
-  #chat-toggle span {
-    display: none;
-    width: 56px;
-    height: 56px;
-    font-size: 24px;
-}
-
-#chatbox {
-width: 100%;
-right: 0;
-    left: 0;
-    bottom: 90px;
-    bottom: 0;
-    height: 60%;
-border-radius: 12px 12px 0 0;
-}
-}
-
-
