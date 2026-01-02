@@ -65,14 +65,14 @@ export default async function handler(req, res) {
     }
 
     // ---- AI (GROQ) FOR OPINIONS / GENERAL QUESTIONS ----
-   const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
   method: "POST",
   headers: {
     "Content-Type": "application/json",
     "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
   },
   body: JSON.stringify({
-    model: "llama3-8b-8192", // ✅ guaranteed free-tier model
+    model: "llama-3.1-8b-instant",
     temperature: 0.7,
     messages: [
       {
@@ -89,30 +89,20 @@ export default async function handler(req, res) {
   })
 });
 
-// 🔴 LOG EVERYTHING
 const raw = await groqRes.text();
-console.log("GROQ STATUS:", groqRes.status);
 console.log("GROQ RAW:", raw);
 
-// try parse
-let data;
-try {
-  data = JSON.parse(raw);
-} catch (e) {
-  return res.json({
-    reply: "Groq returned an invalid response."
-  });
-}
-
+const data = JSON.parse(raw);
 const aiText = data?.choices?.[0]?.message?.content;
 
 if (!aiText) {
   return res.json({
-    reply: "Groq did not return an answer. Check function logs."
+    reply: "Groq did not return an answer."
   });
 }
 
 return res.json({ reply: aiText.trim() });
+
 
 
   } catch (err) {
@@ -122,4 +112,5 @@ return res.json({ reply: aiText.trim() });
     });
   }
 }
+
 
