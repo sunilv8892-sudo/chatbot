@@ -34,11 +34,12 @@ document.addEventListener("DOMContentLoaded", () => {
     addMessage(text, "user");
     input.value = "";
 
-    fetch("/chat", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text })
-    })
+   fetch("/api/chat", {
+  method: "POST",
+  headers: { "Content-Type": "application/json" },
+  body: JSON.stringify({ message: text })
+})
+
       .then(res => res.json())
       .then(data => addMessage(data.reply, "bot"))
       .catch(() => addMessage("Server error.", "bot"));
@@ -52,3 +53,4 @@ document.addEventListener("DOMContentLoaded", () => {
     messages.scrollTop = messages.scrollHeight;
   }
 });
+
