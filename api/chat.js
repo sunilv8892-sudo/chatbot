@@ -1,9 +1,12 @@
-export default function handler(req, res) {
+export default async function handler(req, res) {
   try {
     if (req.method !== "POST") {
       return res.status(405).json({ reply: "Method not allowed" });
     }
 
+    /* =========================
+       SAFE BODY PARSING
+    ========================= */
     let message = "";
     if (typeof req.body === "string") message = req.body;
     else if (req.body && typeof req.body === "object") message = req.body.message || "";
@@ -14,14 +17,26 @@ export default function handler(req, res) {
     const hasAny = (arr) => arr.some(w => q.includes(w));
 
     /* =========================
-       ADMISSION (FIXED URL)
+       🔒 RULE-BASED KNOWLEDGE (FIRST)
     ========================= */
-    if (hasAny(["admission", "apply", "join", "enroll"])) {
+
+    if (hasAny(["hi", "hello", "hey"])) {
+      return res.json({
+        reply:
+          "Hello 👋 I’m the MIT First Grade College chatbot.\n\n" +
+          "You can ask me about admissions, courses, eligibility, notes, location, or general college information.",
+        links: [
+          { label: "Admissions", url: "https://mitfgc.in/admission/" },
+          { label: "Courses", url: "https://mitfgc.in/courses/" }
+        ]
+      });
+    }
+
+    if (hasAny(["admission", "apply", "join"])) {
       return res.json({
         reply:
           "📝 **Admissions – MIT First Grade College**\n\n" +
-          "Admissions are open and based on merit as per University of Mysore guidelines.\n\n" +
-          "You can apply online or contact the college office for counselling and fee details.",
+          "Admissions are open and based on merit as per University of Mysore guidelines.",
         links: [
           { label: "Apply for Admission", url: "https://mitfgc.in/admission/" },
           { label: "Contact College", url: "https://mitfgc.in/contact-us/" }
@@ -29,14 +44,10 @@ export default function handler(req, res) {
       });
     }
 
-    /* =========================
-       NOTES
-    ========================= */
-    if (hasAny(["notes", "note", "pdf", "study material", "question paper"])) {
+    if (hasAny(["notes", "pdf", "study material"])) {
       return res.json({
         reply:
-          "📚 **Study Materials & Notes**\n\n" +
-          "Click below to access official notes and previous question papers.",
+          "📚 Study materials and previous question papers are available below.",
         links: [
           {
             label: "Open Study Materials",
@@ -46,17 +57,10 @@ export default function handler(req, res) {
       });
     }
 
-    /* =========================
-       LOCATION / ADDRESS
-    ========================= */
-    if (hasAny(["location", "address", "where", "place"])) {
+    if (hasAny(["location", "address", "where"])) {
       return res.json({
         reply:
-          "📍 **MIT First Grade College Address**\n\n" +
-          "Mananthavadi Road,\n" +
-          "Vidyaranyapura,\n" +
-          "Mysuru – 570008,\n" +
-          "Karnataka, India",
+          "📍 MIT First Grade College is located at Mananthavadi Road, Vidyaranyapura, Mysuru – 570008, Karnataka.",
         links: [
           {
             label: "Open in Google Maps",
@@ -66,90 +70,71 @@ export default function handler(req, res) {
       });
     }
 
-    /* =========================
-       COURSES
-    ========================= */
-    if (hasAny(["courses", "course", "program"])) {
+    if (hasAny(["is this college good", "worth joining", "safe", "parent"])) {
       return res.json({
         reply:
-          "🎓 **Courses Offered at MIT First Grade College**\n\n" +
-          "• BCA – Bachelor of Computer Applications\n" +
-          "• BBA – Bachelor of Business Administration\n" +
-          "• B.Com – Bachelor of Commerce",
+          "That’s a very valid question 😊\n\n" +
+          "MIT First Grade College is a well-established institution in Mysuru, known for a disciplined campus, experienced faculty, and focus on academics.\n\n" +
+          "It is considered a good and safe choice by students and parents.",
         links: [
-          { label: "BCA Details", url: "https://mitfgc.in/bca/" },
-          { label: "BBA Details", url: "https://mitfgc.in/bba/" },
-          { label: "B.Com Details", url: "https://mitfgc.in/b-com/" }
+          { label: "Admissions", url: "https://mitfgc.in/admission/" }
         ]
       });
     }
 
     /* =========================
-       ELIGIBILITY
+       🤖 GEMINI AI FALLBACK (ONLY IF KB FAILS)
     ========================= */
-    if (hasAny(["eligibility", "eligible", "qualification"])) {
-      return res.json({
-        reply:
-          "✅ **Eligibility Criteria**\n\n" +
-          "• BCA: 10+2 with Maths / CS / Accountancy OR relevant diploma\n" +
-          "• BBA & B.Com: 10+2 in any discipline",
-        links: [
-          { label: "Admission Page", url: "https://mitfgc.in/admission/" }
-        ]
-      });
-    }
 
-    /* =========================
-       CONTACT
-    ========================= */
-    if (hasAny(["contact", "phone", "email"])) {
-      return res.json({
-        reply:
-          "📞 Phone: 0821 233 1722\n" +
-          "📧 Email: chandrajithmmca@mitmysore.in\n" +
-          "🕘 Office Hours: Mon–Sat, 9:30 AM – 4:30 PM",
-        links: [
-          { label: "Contact Page", url: "https://mitfgc.in/contact-us/" }
-        ]
-      });
-    }
+    const geminiRes = await fetch(
+      `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
+      {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          contents: [
+            {
+              parts: [
+                {
+                  text: `
+You are an official college assistant for MIT First Grade College, Mysuru.
 
-    /* =========================
-       GREETING
-    ========================= */
-    if (hasAny(["hi", "hello", "hey"])) {
-      return res.json({
-        reply:
-          "Hello 👋 I’m the MIT First Grade College chatbot.\n\n" +
-          "You can ask me about admissions, courses, eligibility, notes, location, or contact details.",
-        links: [
-          { label: "Admissions", url: "https://mitfgc.in/admission/" },
-          { label: "Courses", url: "https://mitfgc.in/courses/" }
-        ]
-      });
-    }
+RULES:
+- Answer politely and clearly
+- Stay within college-related information
+- If unsure, guide user to admissions/contact
+- Do NOT hallucinate facts
+- Tone should be friendly and reassuring
 
-    /* =========================
-       FALLBACK
-    ========================= */
+College info:
+MIT First Grade College, Mysuru
+Courses: BCA, BBA, B.Com
+Admissions: https://mitfgc.in/admission/
+Contact: https://mitfgc.in/contact-us/
+
+User question:
+${message}
+`
+                }
+              ]
+            }
+          ]
+        })
+      }
+    );
+
+    const data = await geminiRes.json();
+    const aiReply =
+      data?.candidates?.[0]?.content?.parts?.[0]?.text ||
+      "For accurate information, please contact the college office.";
+
+    return res.json({ reply: aiReply });
+
+  } catch (err) {
+    console.error("CHATBOT ERROR:", err);
     return res.json({
       reply:
-        "I can help you with:\n\n" +
-        "• Admissions\n" +
-        "• Courses (BCA, BBA, B.Com)\n" +
-        "• Eligibility\n" +
-        "• Study Materials\n" +
-        "• Location & Contact",
-      links: [
-        { label: "Admissions", url: "https://mitfgc.in/admission/" },
-        { label: "Contact College", url: "https://mitfgc.in/contact-us/" }
-      ]
-    });
-
-  } catch (e) {
-    console.error("CHATBOT ERROR:", e);
-    return res.json({
-      reply: "Something went wrong internally, but the chatbot is still running."
+        "Sorry, something went wrong. Please try again or contact the college office."
     });
   }
 }
