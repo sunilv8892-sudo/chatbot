@@ -1,47 +1,54 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const chatToggle = document.getElementById("chat-toggle");
-  const chatBox = document.getElementById("chatbox");
-  const closeChat = document.getElementById("close-chat");
   const toggle = document.getElementById("chat-toggle");
   const chatbox = document.getElementById("chatbox");
-  const close = document.getElementById("close-chat");
-const sendBtn = document.getElementById("send-btn");
-const input = document.getElementById("input");
-const messages = document.getElementById("messages");
+  const closeBtn = document.getElementById("close-chat");
+  const sendBtn = document.getElementById("send-btn");
+  const input = document.getElementById("input");
+  const messages = document.getElementById("messages");
 
-  // FORCE INITIAL STATE = CLOSED
-  chatBox.style.display = "none";
+  // initial state
+  chatbox.style.display = "none";
 
-  // OPEN CHAT
- chatToggle.addEventListener("click", () => {
-  if (chatBox.style.display === "none" || chatBox.style.display === "") {
-    chatBox.style.display = "flex";
-  } else {
-    chatBox.style.display = "none";
-  }
-});
+  // toggle open/close
   toggle.addEventListener("click", () => {
     chatbox.style.display =
-      chatbox.style.display === "none" || chatbox.style.display === ""
-        ? "flex"
-        : "none";
+      chatbox.style.display === "none" ? "flex" : "none";
   });
 
-  // CLOSE CHAT
-  closeChat.addEventListener("click", () => {
-    chatBox.style.display = "none";
-  close.addEventListener("click", () => {
+  // close button
+  closeBtn.addEventListener("click", () => {
     chatbox.style.display = "none";
-});
+  });
 
-  // SEND BUTTON
-sendBtn.addEventListener("click", sendMessage);
+  // send message
+  sendBtn.addEventListener("click", sendMessage);
 
-  // ENTER KEY
-input.addEventListener("keydown", (e) => {
-if (e.key === "Enter") {
-e.preventDefault();
-@@ -63,4 +55,3 @@ document.addEventListener("DOMContentLoaded", () => {
-return div;
-}
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") sendMessage();
+  });
+
+  function sendMessage() {
+    const text = input.value.trim();
+    if (!text) return;
+
+    addMessage(text, "user");
+    input.value = "";
+
+    fetch("/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: text })
+    })
+      .then(res => res.json())
+      .then(data => addMessage(data.reply, "bot"))
+      .catch(() => addMessage("Server error.", "bot"));
+  }
+
+  function addMessage(text, type) {
+    const div = document.createElement("div");
+    div.className = type;
+    div.textContent = text;
+    messages.appendChild(div);
+    messages.scrollTop = messages.scrollHeight;
+  }
 });
