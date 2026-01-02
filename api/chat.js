@@ -28,7 +28,7 @@ export default function handler(req, res) {
           "• Visit the college office\n" +
           "• Contact for counselling & fee details",
         links: [
-          { label: "Apply for Admission", url: "https://mitfgc.in/admissions/" },
+          { label: "Apply for Admission", url: "https://mitfgc.in/admission/" },
           { label: "Contact College", url: "https://mitfgc.in/contact-us" }
         ]
       });
@@ -159,4 +159,5 @@ export default function handler(req, res) {
     });
   }
 }
+
 
