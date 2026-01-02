@@ -97,19 +97,31 @@ const geminiRes = await fetch(
           role: "user",
           parts: [{ text: message }]
         }
+      ],
+      generationConfig: {
+        temperature: 0.7,
+        topP: 0.9,
+        maxOutputTokens: 300
+      },
+      safetySettings: [
+        { category: "HARM_CATEGORY_HARASSMENT", threshold: "BLOCK_NONE" },
+        { category: "HARM_CATEGORY_HATE_SPEECH", threshold: "BLOCK_NONE" },
+        { category: "HARM_CATEGORY_SEXUAL_CONTENT", threshold: "BLOCK_NONE" },
+        { category: "HARM_CATEGORY_DANGEROUS_CONTENT", threshold: "BLOCK_NONE" }
       ]
     })
   }
 );
 
 const data = await geminiRes.json();
-console.log("GEMINI RAW RESPONSE:", JSON.stringify(data, null, 2));
+console.log("GEMINI RESPONSE:", JSON.stringify(data, null, 2));
 
 const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
 if (!aiText) {
   return res.json({
-    reply: "AI is temporarily unavailable. Please try again."
+    reply:
+      "I couldn’t generate a response right now. Please try asking in a different way."
   });
 }
 
@@ -124,5 +136,6 @@ return res.json({ reply: aiText.trim() });
     });
   }
 }
+
 
 
