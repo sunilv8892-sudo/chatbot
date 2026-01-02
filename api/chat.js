@@ -87,47 +87,15 @@ export default async function handler(req, res) {
 ========================= */
 
 const geminiRes = await fetch(
-  `https://generativelanguage.googleapis.com/v1beta/models/gemini-pro:generateContent?key=${process.env.GEMINI_API_KEY}`,
+  `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${process.env.GEMINI_API_KEY}`,
   {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({
       contents: [
         {
-          parts: [
-            {
-              text: `
-You are an AI assistant helping students who are asking about MIT First Grade College, Mysuru.
-
-IMPORTANT BEHAVIOUR RULES:
-- Answer naturally, like a real person
-- Do NOT refuse questions
-- Do NOT say "I don't have information"
-- Do NOT hallucinate specific facilities or events
-- If exact details are unknown, speak generally and honestly
-- It is okay to say things like "generally", "students usually feel", "from an academic point of view"
-
-You may talk about:
-- Campus environment
-- Student experience
-- Academic atmosphere
-- Faculty support
-- General college life in Indian degree colleges
-
-KNOWN FACTS (ONLY THESE ARE GUARANTEED):
-- College: MIT First Grade College, Mysuru
-- Courses: BCA, BBA, B.Com
-- Affiliated to University of Mysore
-- Disciplined academic environment
-
-If the question is opinion-based (e.g. campus life, enjoyment, stress, culture),
-answer thoughtfully without exaggeration.
-
-User question:
-${message}
-`
-            }
-          ]
+          role: "user",
+          parts: [{ text: message }]
         }
       ]
     })
@@ -135,12 +103,18 @@ ${message}
 );
 
 const data = await geminiRes.json();
+console.log("GEMINI RAW RESPONSE:", JSON.stringify(data, null, 2));
 
-const aiReply =
-  data?.candidates?.[0]?.content?.parts?.[0]?.text ||
-  "College life usually depends on how students engage with academics, friends, and activities.";
+const aiText = data?.candidates?.[0]?.content?.parts?.[0]?.text;
 
-return res.json({ reply: aiReply });
+if (!aiText) {
+  return res.json({
+    reply: "AI is temporarily unavailable. Please try again."
+  });
+}
+
+return res.json({ reply: aiText.trim() });
+
 
   } catch (err) {
     console.error("CHATBOT ERROR:", err);
@@ -150,4 +124,5 @@ return res.json({ reply: aiReply });
     });
   }
 }
+
 
