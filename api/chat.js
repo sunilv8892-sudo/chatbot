@@ -4,7 +4,7 @@ export default async function handler(req, res) {
       return res.status(405).json({ reply: "Method not allowed" });
     }
 
-    // ---------- SAFE BODY ----------
+    // ---- parse message safely ----
     let message = "";
     if (typeof req.body === "string") message = req.body;
     else if (req.body && typeof req.body === "object") message = req.body.message || "";
@@ -14,8 +14,7 @@ export default async function handler(req, res) {
 
     const hasAny = (arr) => arr.some(w => q.includes(w));
 
-    // ---------- FACT / ACTION RULES (FAST + BUTTONS) ----------
-    // Admissions (FACT)
+    // ---- RULE BASED (FACTS & LINKS) ----
     if (hasAny(["admission", "apply"])) {
       return res.json({
         reply:
@@ -28,8 +27,7 @@ export default async function handler(req, res) {
       });
     }
 
-    // Notes
-    if (hasAny(["notes", "pdf", "study material", "question paper"])) {
+    if (hasAny(["notes", "pdf", "study material"])) {
       return res.json({
         reply: "📚 Study materials and previous question papers:",
         links: [
@@ -41,7 +39,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Location
     if (hasAny(["location", "address", "where"])) {
       return res.json({
         reply:
@@ -55,7 +52,6 @@ export default async function handler(req, res) {
       });
     }
 
-    // Greeting (first contact only)
     if (hasAny(["hi", "hello", "hey"])) {
       return res.json({
         reply:
@@ -68,38 +64,47 @@ export default async function handler(req, res) {
       });
     }
 
-    // ---------- OPINION / HUMAN QUESTIONS → AI ----------
-    // Everything else goes to OpenAI
+    // ---- AI (GROQ) FOR OPINIONS / GENERAL QUESTIONS ----
+    const groqRes = await fetch("https://api.groq.com/openai/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "llama3-70b-8192",
+        temperature: 0.7,
+        messages: [
+          {
+            role: "system",
+            content:
+              "You are a helpful, honest college assistant for MIT First Grade College, Mysuru. " +
+              "Answer naturally like a human. Do not exaggerate or invent facts. " +
+              "For opinion questions (campus life, whether to join), respond thoughtfully and generally."
+          },
+          {
+            role: "user",
+            content: message
+          }
+        ]
+      })
+    });
 
-    const openaiRes = await fetch("https://api.openai.com/v1/chat/completions", {
-  method: "POST",
-  headers: {
-    "Content-Type": "application/json",
-    "Authorization": `Bearer ${process.env.OPENAI_API_KEY}`
-  },
-  body: JSON.stringify({
-    model: "gpt-4o-mini",
-    messages: [
-      { role: "system", content: "You are a helpful assistant." },
-      { role: "user", content: message }
-    ]
-  })
-});
+    const data = await groqRes.json();
+    const aiText = data?.choices?.[0]?.message?.content;
 
-const raw = await openaiRes.text();
-console.log("OPENAI RAW:", raw);
+    if (!aiText) {
+      return res.json({
+        reply: "I couldn’t generate a response right now. Please try again."
+      });
+    }
 
-return res.json({
-  reply: "DEBUG MODE — check function logs",
-  debug: raw
-});
-
+    return res.json({ reply: aiText.trim() });
 
   } catch (err) {
-    console.error("OPENAI ERROR:", err);
+    console.error("GROQ ERROR:", err);
     return res.json({
       reply: "Something went wrong. Please try again in a moment."
     });
   }
 }
-
