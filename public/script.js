@@ -1,34 +1,69 @@
-const toggleBtn = document.getElementById("chat-toggle");
+document.addEventListener("DOMContentLoaded", () => {
+  const toggle = document.getElementById("chat-toggle");
+  const chatbox = document.getElementById("chatbox");
+  const close = document.getElementById("close-chat");
+  const sendBtn = document.getElementById("send-btn");
+  const input = document.getElementById("input");
+  const messages = document.getElementById("messages");
+
+  toggle.addEventListener("click", () => {
+    chatbox.style.display =
+      chatbox.style.display === "none" || chatbox.style.display === ""
+        ? "flex"
+        : "none";
+  });
+
+  close.addEventListener("click", () => {
+    chatbox.style.display = "none";
+  });
+
+  sendBtn.addEventListener("click", sendMessage);
+
+  input.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      sendMessage();
+    }
+  });
+
+  async function sendMessage() {
+    const msg = input.value.trim();
+    if (!msg) return;
+
+    addMessage(msg, "user");
+    input.value = "";
+
+    const typing = addMessage("Typing...", "bot");
+
+    const res = await fetch("/api/chat", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ message: msg })
+    });
+
+    const data = await res.json();
+    typing.remove();
+    addMessage(data.reply, "bot");
+  }
+
+  function addMessage(text, sender) {
+    const div = document.createElement("div");
+    div.className = `msg ${sender}`;
+    div.innerText = text;
+    messages.appendChild(div);
+const toggle = document.getElementById("chat-toggle");
 const chatbox = document.getElementById("chatbox");
 const closeBtn = document.getElementById("close-chat");
 const messages = document.getElementById("messages");
 const input = document.getElementById("input");
 const sendBtn = document.getElementById("send-btn");
+const typing = document.getElementById("typing");
 
-let chatOpen = false;
+toggle.onclick = () => chatbox.classList.toggle("hidden");
+closeBtn.onclick = () => chatbox.classList.add("hidden");
 
-// Toggle open / close
-toggleBtn.addEventListener("click", () => {
-  if (chatOpen) {
-    chatbox.classList.add("hidden");
-    chatOpen = false;
-  } else {
-    chatbox.classList.remove("hidden");
-    chatOpen = true;
-  }
-});
-
-// Close with ❌
-closeBtn.addEventListener("click", () => {
-  chatbox.classList.add("hidden");
-  chatOpen = false;
-});
-
-// Send message
-sendBtn.addEventListener("click", send);
-input.addEventListener("keydown", (e) => {
-  if (e.key === "Enter") send();
-});
+sendBtn.onclick = send;
+input.addEventListener("keypress", e => e.key === "Enter" && send());
 
 function send() {
   const text = input.value.trim();
@@ -36,15 +71,20 @@ function send() {
 
   messages.innerHTML += `<div class="msg user">${text}</div>`;
   input.value = "";
+  typing.classList.remove("hidden");
 
   fetch("/api/chat", {
     method: "POST",
     headers: { "Content-Type": "application/json" },
     body: JSON.stringify({ message: text })
   })
-  .then(res => res.json())
-  .then(data => {
-    messages.innerHTML += `<div class="msg bot">${data.reply}</div>`;
-    messages.scrollTop = messages.scrollHeight;
+  .then(r => r.json())
+  .then(d => {
+    typing.classList.add("hidden");
+    messages.innerHTML += `<div class="msg bot">${d.reply}</div>`;
+messages.scrollTop = messages.scrollHeight;
+    return div;
+  }
+});
   });
 }
