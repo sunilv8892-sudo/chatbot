@@ -14,27 +14,24 @@ export default function handler(req, res) {
     const hasAny = (arr) => arr.some(w => q.includes(w));
 
     /* =========================
-       🔥 HIGH PRIORITY INTENTS
+       ADMISSION (FIXED URL)
     ========================= */
-
-    // ADMISSION (FIXED + GOOD RESPONSE)
     if (hasAny(["admission", "apply", "join", "enroll"])) {
       return res.json({
         reply:
           "📝 **Admissions – MIT First Grade College**\n\n" +
           "Admissions are open and based on merit as per University of Mysore guidelines.\n\n" +
-          "You can:\n" +
-          "• Apply online\n" +
-          "• Visit the college office\n" +
-          "• Contact for counselling & fee details",
+          "You can apply online or contact the college office for counselling and fee details.",
         links: [
           { label: "Apply for Admission", url: "https://mitfgc.in/admission/" },
-          { label: "Contact College", url: "https://mitfgc.in/contact-us" }
+          { label: "Contact College", url: "https://mitfgc.in/contact-us/" }
         ]
       });
     }
 
-    // NOTES (FORCED)
+    /* =========================
+       NOTES
+    ========================= */
     if (hasAny(["notes", "note", "pdf", "study material", "question paper"])) {
       return res.json({
         reply:
@@ -49,7 +46,9 @@ export default function handler(req, res) {
       });
     }
 
-    // LOCATION / ADDRESS (FIXED)
+    /* =========================
+       LOCATION / ADDRESS
+    ========================= */
     if (hasAny(["location", "address", "where", "place"])) {
       return res.json({
         reply:
@@ -70,18 +69,17 @@ export default function handler(req, res) {
     /* =========================
        COURSES
     ========================= */
-
     if (hasAny(["courses", "course", "program"])) {
       return res.json({
         reply:
-          "🎓 **Courses Offered**\n\n" +
-          "• BCA – Computer Applications\n" +
-          "• BBA – Business Administration\n" +
-          "• B.Com – Commerce",
+          "🎓 **Courses Offered at MIT First Grade College**\n\n" +
+          "• BCA – Bachelor of Computer Applications\n" +
+          "• BBA – Bachelor of Business Administration\n" +
+          "• B.Com – Bachelor of Commerce",
         links: [
-          { label: "BCA Details", url: "https://mitfgc.in/bca" },
-          { label: "BBA Details", url: "https://mitfgc.in/bba" },
-          { label: "B.Com Details", url: "https://mitfgc.in/b-com" }
+          { label: "BCA Details", url: "https://mitfgc.in/bca/" },
+          { label: "BBA Details", url: "https://mitfgc.in/bba/" },
+          { label: "B.Com Details", url: "https://mitfgc.in/b-com/" }
         ]
       });
     }
@@ -89,7 +87,6 @@ export default function handler(req, res) {
     /* =========================
        ELIGIBILITY
     ========================= */
-
     if (hasAny(["eligibility", "eligible", "qualification"])) {
       return res.json({
         reply:
@@ -97,7 +94,7 @@ export default function handler(req, res) {
           "• BCA: 10+2 with Maths / CS / Accountancy OR relevant diploma\n" +
           "• BBA & B.Com: 10+2 in any discipline",
         links: [
-          { label: "Admission Info", url: "https://mitfgc.in/admissions" }
+          { label: "Admission Page", url: "https://mitfgc.in/admission/" }
         ]
       });
     }
@@ -105,7 +102,6 @@ export default function handler(req, res) {
     /* =========================
        CONTACT
     ========================= */
-
     if (hasAny(["contact", "phone", "email"])) {
       return res.json({
         reply:
@@ -113,7 +109,7 @@ export default function handler(req, res) {
           "📧 Email: chandrajithmmca@mitmysore.in\n" +
           "🕘 Office Hours: Mon–Sat, 9:30 AM – 4:30 PM",
         links: [
-          { label: "Contact Page", url: "https://mitfgc.in/contact-us" }
+          { label: "Contact Page", url: "https://mitfgc.in/contact-us/" }
         ]
       });
     }
@@ -121,23 +117,21 @@ export default function handler(req, res) {
     /* =========================
        GREETING
     ========================= */
-
     if (hasAny(["hi", "hello", "hey"])) {
       return res.json({
         reply:
           "Hello 👋 I’m the MIT First Grade College chatbot.\n\n" +
-          "Ask me about admissions, courses, eligibility, notes, location, or contact details.",
+          "You can ask me about admissions, courses, eligibility, notes, location, or contact details.",
         links: [
-          { label: "Admissions", url: "https://mitfgc.in/admissions" },
-          { label: "Courses", url: "https://mitfgc.in/courses" }
+          { label: "Admissions", url: "https://mitfgc.in/admission/" },
+          { label: "Courses", url: "https://mitfgc.in/courses/" }
         ]
       });
     }
 
     /* =========================
-       FALLBACK (SMART)
+       FALLBACK
     ========================= */
-
     return res.json({
       reply:
         "I can help you with:\n\n" +
@@ -147,8 +141,8 @@ export default function handler(req, res) {
         "• Study Materials\n" +
         "• Location & Contact",
       links: [
-        { label: "Admissions", url: "https://mitfgc.in/admissions" },
-        { label: "Contact College", url: "https://mitfgc.in/contact-us" }
+        { label: "Admissions", url: "https://mitfgc.in/admission/" },
+        { label: "Contact College", url: "https://mitfgc.in/contact-us/" }
       ]
     });
 
@@ -159,5 +153,3 @@ export default function handler(req, res) {
     });
   }
 }
-
-
