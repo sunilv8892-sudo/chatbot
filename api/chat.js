@@ -252,111 +252,98 @@ export default async function handler(req, res) {
     // ==============================
     // CONTINUE IN PART 3
     // ==============================
-
 // ==============================
-// PART 3 / 4  (UPDATED – AI ALWAYS HANDLES COLLEGE QUESTIONS)
-// CONTINUATION OF api/chat.js
+// PART 3 / 4
+// AI ENGINE (ROBUST)
 // ==============================
 
-    /*
-      IMPORTANT CHANGE:
-      -----------------
-      • Static logic is now ONLY for UX (buttons, links, quick facts)
-      • AI is ALWAYS allowed to answer college-related questions
-      • No keyword gating
-      • No spelling sensitivity
-      • No length checks
-    */
-
-    // ==============================
-    // AI FALLBACK — PRIMARY BRAIN
-    // ==============================
-
-    try {
-      const groqRes = await fetch(
-        "https://api.groq.com/openai/v1/chat/completions",
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
-          },
-          body: JSON.stringify({
-            model: "llama-3.1-8b-instant",
-            temperature: 0.35,
-            messages: [
-              {
-                role: "system",
-                content:
+async function askAI(message) {
+  const response = await fetch(
+    "https://api.groq.com/openai/v1/chat/completions",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "llama-3.1-8b-instant",
+        temperature: 0.3,
+        max_tokens: 300,
+        messages: [
+          {
+            role: "system",
+            content:
 `You are the official AI assistant for MIT First Grade College, Mysuru.
 
-You are provided with COMPLETE OFFICIAL COLLEGE INFORMATION below.
-This data is the SINGLE SOURCE OF TRUTH.
+You MUST ALWAYS answer the user's question.
 
-CRITICAL INSTRUCTIONS:
-- Answer ALL college-related questions using the data.
-- Handle spelling mistakes, short questions, and informal language.
-- If a FACT exists (affiliation, trust, safety, committees), extract it clearly.
-- If the question is opinion-based (teachers friendly, campus life, should I join),
-  answer realistically and positively without exaggeration.
-- NEVER reply with generic fallback messages.
-- NEVER say "I can help with..." unless the question is totally unrelated.
+RULES:
+- The user is asking about this college.
+- Use the college information below as facts.
+- If the question is factual, answer directly.
+- If the question is opinion-based, give a balanced helpful answer.
+- NEVER say "I can help with".
+- NEVER refuse.
+- NEVER stay silent.
 
 COLLEGE INFORMATION:
 ${COLLEGE_CORPUS}
 `
-              },
-              {
-                role: "user",
-                content: message
-              }
-            ]
-          })
-        }
-      );
-
-      const data = await groqRes.json();
-      const aiText = data?.choices?.[0]?.message?.content;
-
-      if (aiText && aiText.trim()) {
-        return res.json({ reply: aiText.trim() });
-      }
-
-    } catch (err) {
-      console.error("AI ERROR:", err);
+          },
+          {
+            role: "user",
+            content: message
+          }
+        ]
+      })
     }
+  );
 
-    // ==============================
-    // CONTINUE IN PART 4
-    // ==============================
-
+  const data = await response.json();
+  return data?.choices?.[0]?.message?.content?.trim() || "";
+}
 // ==============================
-// PART 4 / 4  (UPDATED – SMART FINAL FALLBACK)
+// PART 4 / 4
+// GUARANTEED RESPONSE
 // ==============================
 
-    /*
-      This fallback should be RARE now.
-      It only triggers if:
-      • AI API fails
-      • Network error
-      • Invalid response
-    */
+let aiAnswer = "";
 
-    return res.json({
-      reply:
-        "Sorry, I couldn’t process that right now. You can ask me about admissions, courses, affiliation, safety, faculty, or campus life at MIT First Grade College."
-    });
+// First attempt
+try {
+  aiAnswer = await askAI(message);
+} catch (e) {
+  console.error("AI attempt 1 failed");
+}
 
-  } catch (err) {
-    console.error("SERVER ERROR:", err);
-    return res.json({
-      reply: "Server error. Please try again."
-    });
+// Retry once if empty
+if (!aiAnswer) {
+  try {
+    aiAnswer = await askAI(
+      "Answer clearly: " + message
+    );
+  } catch (e) {
+    console.error("AI attempt 2 failed");
   }
 }
 
-// ==============================
-// END OF FILE
-// ==============================
+// FINAL SAFETY NET (NO APOLOGY EVER)
+if (!aiAnswer) {
+  if (q.includes("college") || q.includes("good")) {
+    aiAnswer =
+      "MIT First Grade College is an undergraduate institution affiliated with the University of Mysore. It focuses on academics, student safety, and overall student development. Whether it is a good choice depends on your academic interests and goals.";
+  } else if (q.includes("admission")) {
+    aiAnswer =
+      "Admissions at MIT First Grade College are based on merit as per University of Mysore guidelines. The college offers undergraduate programs such as BCA, B.Com, and BBA.";
+  } else {
+    aiAnswer =
+      "MIT First Grade College provides undergraduate education with focus on academics, faculty support, and student welfare. You can ask about courses, safety, admissions, or campus life.";
+  }
+}
+
+return res.json({ reply: aiAnswer });
+
+
 
 
