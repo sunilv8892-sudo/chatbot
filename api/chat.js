@@ -254,14 +254,8 @@ export default async function handler(req, res) {
     // ==============================
 // ==============================
 // PART 3 / 4
-// AI ENGINE (ROBUST)
+// AI RESPONSE (FIXED, SIMPLE, STABLE)
 // ==============================
-
-/* ===============================
-   AI RESPONSE (FIXED & STABLE)
-================================ */
-
-let aiReply = null;
 
 try {
   const aiRes = await fetch(
@@ -275,22 +269,17 @@ try {
       body: JSON.stringify({
         model: "llama-3.1-8b-instant",
         temperature: 0.4,
-        max_tokens: 350,
+        max_tokens: 300,
         messages: [
           {
             role: "system",
             content: `
 You are the official AI assistant for MIT First Grade College, Mysuru.
 
-You KNOW everything about the college from the data below.
-You MUST answer the user's question.
-
-Rules:
-- Answer even if the question has spelling mistakes.
-- Answer short factual questions clearly.
-- Answer opinion questions in a balanced, helpful way.
-- NEVER say "I can help with" or refuse.
-- NEVER stay silent.
+Use the college information below to answer the user.
+Handle spelling mistakes.
+Answer factual and opinion questions.
+Never refuse.
 
 COLLEGE INFORMATION:
 ${COLLEGE_CORPUS}
@@ -306,26 +295,29 @@ ${COLLEGE_CORPUS}
   );
 
   const data = await aiRes.json();
-  aiReply = data?.choices?.[0]?.message?.content?.trim();
+  const aiReply = data?.choices?.[0]?.message?.content;
 
-} catch (e) {
-  console.error("AI ERROR:", e);
+  if (aiReply) {
+    return res.json({ reply: aiReply.trim() });
+  }
+
+} catch (err) {
+  console.error("AI ERROR:", err);
 }
+// ==============================
+// PART 4 / 4
+// FINAL SAFE FALLBACK + CLOSE HANDLER
+// ==============================
 
-/* ===============================
-   FINAL RETURN (NO APOLOGY)
-================================ */
-
-if (aiReply) {
-  return res.json({ reply: aiReply });
-}
-
-// absolute last fallback (never looks broken)
 return res.json({
   reply:
     "MIT First Grade College is affiliated with the University of Mysore and offers undergraduate programs with focus on academics, student safety, and overall development."
 });
 
-
-
-
+} catch (err) {
+  console.error("SERVER ERROR:", err);
+  return res.json({
+    reply: "Server error. Please try again."
+  });
+}
+}
