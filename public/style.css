@@ -1,11 +1,10 @@
 html, body {
   margin: 0;
-  padding: 0;
   height: 100%;
-  font-family: Arial, sans-serif;
+  font-family: "Segoe UI", sans-serif;
 }
 
-/* Background site */
+/* Background iframe */
 #college-site {
   position: fixed;
   inset: 0;
@@ -15,115 +14,156 @@ html, body {
   z-index: 1;
 }
 
-/* Toggle button */
+/* Floating toggle */
 #chat-toggle {
   position: fixed;
-  bottom: 20px;
-  right: 20px;
+  bottom: 24px;
+  right: 24px;
   width: 64px;
   height: 64px;
-  background: #002147;
+  background: radial-gradient(circle, #004aad, #002147);
   color: white;
-  font-size: 26px;
+  font-size: 28px;
   border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
+  display: grid;
+  place-items: center;
   cursor: pointer;
   z-index: 9999;
-  box-shadow: 0 4px 12px rgba(0,0,0,.4);
+  box-shadow: 0 0 20px rgba(0,74,173,.7);
+  animation: float 3s ease-in-out infinite;
 }
 
-/* Chatbox */
+@keyframes float {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
+
+/* Chat window */
 #chatbox {
   position: fixed;
   bottom: 100px;
-  right: 20px;
-  width: 340px;
-  height: 420px;
-  background: white;
-  border-radius: 10px;
+  right: 24px;
+  width: 360px;
+  height: 460px;
   display: none;
   flex-direction: column;
+  backdrop-filter: blur(14px);
+  background: rgba(255,255,255,.9);
+  border-radius: 16px;
   z-index: 9999;
-  box-shadow: 0 0 15px rgba(0,0,0,.4);
+  box-shadow: 0 0 30px rgba(0,0,0,.4);
+  animation: pop 0.3s ease;
+}
+
+@keyframes pop {
+  from { opacity: 0; transform: scale(.9); }
+  to { opacity: 1; transform: scale(1); }
 }
 
 #chat-header {
-  background: #002147;
+  background: linear-gradient(90deg,#002147,#004aad);
   color: white;
-  padding: 10px;
+  padding: 12px;
+  border-radius: 16px 16px 0 0;
   display: flex;
   justify-content: space-between;
-  align-items: center;
 }
 
+/* Messages */
 #messages {
   flex: 1;
-  padding: 10px;
+  padding: 12px;
   overflow-y: auto;
+}
+
+.message {
+  max-width: 85%;
+  margin-bottom: 10px;
+  padding: 10px 14px;
+  border-radius: 14px;
+  animation: slide 0.25s ease;
+}
+
+@keyframes slide {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
 .user {
   background: #002147;
   color: white;
-  margin: 6px;
-  padding: 6px 10px;
-  border-radius: 6px;
   align-self: flex-end;
 }
 
 .bot {
-  background: #eee;
-  margin: 6px;
-  padding: 6px 10px;
-  border-radius: 6px;
-  align-self: flex-start;
+  background: #f1f1f1;
+  color: #222;
 }
 
+/* Buttons */
+.link-wrap {
+  display: flex;
+  gap: 6px;
+  margin-top: 8px;
+  flex-wrap: wrap;
+}
+
+.link-wrap button {
+  background: #002147;
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: .2s;
+}
+
+.link-wrap button:hover {
+  background: #004aad;
+  transform: translateY(-2px);
+}
+
+/* Input */
 #chat-input {
   display: flex;
-  padding: 8px;
+  padding: 10px;
   gap: 6px;
 }
 
 #input {
   flex: 1;
-  padding: 6px;
+  padding: 8px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
 }
 
 #send-btn {
   background: #002147;
   color: white;
   border: none;
-  padding: 6px 10px;
+  border-radius: 8px;
+  padding: 0 14px;
   cursor: pointer;
 }
-/* Smooth open animation */
-#chatbox {
-  animation: chatPop 0.25s ease-out;
-}
 
-@keyframes chatPop {
-  from {
-    transform: translateY(20px) scale(0.95);
-    opacity: 0;
-  }
-  to {
-    transform: translateY(0) scale(1);
-    opacity: 1;
-  }
-}
-
-/* Button hover premium feel */
-#messages button:hover {
-  background: #004aad;
-  transform: translateY(-1px);
-}
-
-/* Typing dots */
+/* Typing */
 .typing {
-  font-style: italic;
-  opacity: 0.7;
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #555;
 }
 
+.typing span {
+  animation: blink 1.4s infinite both;
+}
+
+.typing span:nth-child(2) { animation-delay: .2s; }
+.typing span:nth-child(3) { animation-delay: .4s; }
+
+@keyframes blink {
+  0% { opacity: .2 }
+  20% { opacity: 1 }
+  100% { opacity: .2 }
+}
+
+.hidden { display: none; }
