@@ -23,6 +23,21 @@ export default async function handler(req, res) {
     }
 
     const hasAny = (arr) => arr.some(w => q.includes(w));
+    // ---------------------------------------------
+// Scope check: only allow AI for college/study questions
+// ---------------------------------------------
+function isCollegeRelated(q) {
+  const collegeContextWords = [
+    "college", "campus", "course", "courses", "degree",
+    "admission", "eligibility", "study", "studies",
+    "student", "faculty", "teacher", "lecturer",
+    "principal", "department", "class", "syllabus",
+    "exam", "semester", "notes", "placement",
+    "bca", "bcom", "bba", "commerce", "computer"
+  ];
+
+  return collegeContextWords.some(w => q.includes(w));
+}
 
     /* =====================================================
        STATIC KNOWLEDGE BASE (NO AI)
@@ -101,6 +116,34 @@ export default async function handler(req, res) {
           "https://drive.google.com/drive/folders/1bTRaNQdcS5d9Bdxwzi9s5_R8QJZSZvRD"
       }
     };
+
+    // ---------------------------------------------
+// Context passed to AI (STRICT, NO GUESSING)
+// ---------------------------------------------
+const collegeContextForAI = `
+College Name: ${KB.college.name}
+Location: ${KB.college.city}, Karnataka
+Address: ${KB.college.address}
+Phone: ${KB.college.phone}
+Email: ${KB.college.email}
+
+Courses Offered:
+- BCA: ${KB.courses.bca.overview}
+- B.Com: ${KB.courses.bcom.overview}
+- BBA: ${KB.courses.bba.overview}
+
+Principal:
+Name: ${KB.staff.principal.name}
+Qualification: ${KB.staff.principal.qualification}
+Experience: ${KB.staff.principal.experience}
+Specialization: ${KB.staff.principal.specialization}
+
+Rule:
+Answer ONLY using the above official information.
+If information is not available, say so clearly.
+Do NOT invent or assume anything.
+`;
+
 
     /* =====================================================
        STATIC RESPONSES (HIGH CONFIDENCE)
@@ -246,7 +289,12 @@ const opinionTriggers = [
 
 const isOpinionQuestion = opinionTriggers.some(t => q.includes(t));
 
-if (isOpinionQuestion) {
+/* =====================================================
+   AI FALLBACK — ONLY IF STATIC DATA FAILED
+   AND ONLY IF QUESTION IS COLLEGE-RELATED
+===================================================== */
+
+if (isCollegeRelated(q)) {
   try {
     const groqRes = await fetch(
       "https://api.groq.com/openai/v1/chat/completions",
@@ -258,20 +306,15 @@ if (isOpinionQuestion) {
         },
         body: JSON.stringify({
           model: "llama-3.1-8b-instant",
-          temperature: 0.6,
+          temperature: 0.5,
           messages: [
             {
               role: "system",
               content:
-                "You are a neutral, non-promotional college information assistant.\n" +
-                "Rules you MUST follow:\n" +
-                "1. Do NOT claim internal knowledge of MIT First Grade College.\n" +
-                "2. Do NOT say 'we', 'our college', or imply authority.\n" +
-                "3. Speak generally based on typical undergraduate colleges in India.\n" +
-                "4. Do NOT invent statistics, placement data, or facilities.\n" +
-                "5. For 'should I join' questions, guide the user to self-evaluate instead of persuading.\n" +
-                "6. Keep tone calm, honest, and professional.\n" +
-                "7. Never exaggerate or guarantee outcomes."
+                "You are an official college information assistant.\n" +
+                "You must NOT guess or invent details.\n" +
+                "Use ONLY the provided college information.\n\n" +
+                collegeContextForAI
             },
             {
               role: "user",
@@ -282,10 +325,7 @@ if (isOpinionQuestion) {
       }
     );
 
-    const raw = await groqRes.text();
-    console.log("GROQ AI RAW:", raw);
-
-    const data = JSON.parse(raw);
+    const data = await groqRes.json();
     const aiText = data?.choices?.[0]?.message?.content;
 
     if (aiText && aiText.trim().length > 20) {
@@ -293,9 +333,10 @@ if (isOpinionQuestion) {
     }
 
   } catch (err) {
-    console.error("GROQ AI ERROR:", err);
+    console.error("GROQ ERROR:", err);
   }
 }
+
 
 /* =====================================================
    SMART STATIC FALLBACK (NO AI FAILURE)
@@ -319,3 +360,10 @@ return res.json({
     });
   }
 }
+
+return res.json({
+  reply:
+    "I can help with official information about MIT First Grade College such as courses, admissions, faculty, campus, and academic guidance."
+});
+
+
