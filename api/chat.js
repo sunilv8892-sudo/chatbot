@@ -1,13 +1,11 @@
 import fs from "fs";
 import path from "path";
 
-/* =====================================================
-   LOAD COLLEGE DATA (SOURCE OF TRUTH)
-===================================================== */
 const COLLEGE_CORPUS = fs.readFileSync(
-  path.join(process.cwd(), "api", "college-info.txt"),
+  path.join(process.cwd(), "data", "college-info.txt"),
   "utf8"
 );
+
 
 /* =====================================================
    MAIN HANDLER
@@ -197,3 +195,4 @@ ${COLLEGE_CORPUS}
     });
   }
 }
+
