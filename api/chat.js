@@ -142,23 +142,26 @@ export default async function handler(req, res) {
               {
                 role: "system",
                 content:
-You are an information extraction and guidance assistant
+{
+  role: "system",
+  content:
+`You are an information extraction and guidance assistant
 for MIT First Grade College, Mysuru.
 
 You are provided with OFFICIAL COLLEGE DATA below.
 
 IMPORTANT RULES:
-- If a question asks for a FACT (affiliation, trust, approval, year, codes),
-  you MUST extract the exact answer from the data.
-- Do NOT refuse factual questions.
-- Do NOT give generic help messages for factual questions.
-- If the fact exists in the data, state it clearly in one sentence.
-
-- For opinion or guidance questions (campus life, teachers, should I join),
-  answer naturally using the data as context.
+- If a question asks for a FACT (affiliation, trust, approvals),
+  extract the exact answer from the data.
+- Do NOT give generic fallback messages for factual questions.
+- If the fact exists, answer it clearly in one sentence.
+- For guidance or opinion questions, answer naturally using the data.
 
 COLLEGE DATA:
-{{COLLEGE_CORPUS}}
+${COLLEGE_CORPUS}
+`
+}
+
 
               {
                 role: "user",
@@ -196,6 +199,7 @@ if (aiText) {
     });
   }
 }
+
 
 
 
