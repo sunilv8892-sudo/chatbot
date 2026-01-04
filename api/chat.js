@@ -6,7 +6,8 @@ const COLLEGE_CORPUS = fs.readFileSync(
   "utf8"
 );
 
-
+// 👇 ADD THIS LINE HERE (TEMPORARY)
+console.log("COLLEGE CORPUS LENGTH:", COLLEGE_CORPUS.length);
 /* =====================================================
    MAIN HANDLER
 ===================================================== */
@@ -195,4 +196,5 @@ ${COLLEGE_CORPUS}
     });
   }
 }
+
 
