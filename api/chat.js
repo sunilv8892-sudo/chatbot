@@ -1,16 +1,19 @@
 import fs from "fs";
 import path from "path";
 
+/* =====================================================
+   LOAD COLLEGE DATA (SOURCE OF TRUTH)
+===================================================== */
 const COLLEGE_CORPUS = fs.readFileSync(
   path.join(process.cwd(), "api", "college-info.txt"),
   "utf8"
 );
 
+/* =====================================================
+   MAIN HANDLER
+===================================================== */
 export default async function handler(req, res) {
   try {
-    /* =====================================================
-       METHOD CHECK
-    ===================================================== */
     if (req.method !== "POST") {
       return res.status(405).json({ reply: "Method not allowed" });
     }
@@ -36,59 +39,94 @@ export default async function handler(req, res) {
     const hasAny = (arr) => arr.some(w => q.includes(w));
 
     /* =====================================================
-       STATIC KNOWLEDGE (QUICK FACTS)
+       STATIC DATA (FAST & RELIABLE)
     ===================================================== */
-    const KB = {
-      college: {
-        name: "MIT First Grade College",
-        city: "Mysuru",
-        phone: "0821 233 1722",
-        email: "chandrajithmmca@mitmysore.in",
-        address:
-          "Mananthavadi Road, Vidyaranyapura, Mysuru – 570008, Karnataka",
-        maps:
-          "https://www.google.com/maps/search/?api=1&query=MIT+First+Grade+College+Mysuru"
-      }
+    const COLLEGE = {
+      name: "MIT First Grade College",
+      city: "Mysuru",
+      address:
+        "Mananthavadi Road, Vidyaranyapura, Mysuru – 570008, Karnataka",
+      phone: "0821 233 1722",
+      email: "chandrajithmmca@mitmysore.in",
+      maps:
+        "https://www.google.com/maps/search/?api=1&query=MIT+First+Grade+College+Mysuru",
+      notes:
+        "https://drive.google.com/drive/folders/1bTRaNQdcS5d9Bdxwzi9s5_R8QJZSZvRD"
     };
 
     /* =====================================================
-       STATIC RESPONSES (FAST & RELIABLE)
+       STATIC ANSWERS (DO NOT TOUCH – THESE WORK)
     ===================================================== */
 
-    if (hasAny(["hi", "hello", "hey"]) && q.length <= 5) {
+    // Greeting
+    if (hasAny(["hi", "hello", "hey"]) && q.length <= 6) {
       return res.json({
         reply:
           "Hello 👋 I’m the MIT First Grade College AI assistant.\n\n" +
-          "You can ask me anything about courses, studies, faculty, safety, admissions, or campus life."
+          "You can ask me about courses, admissions, safety, faculty, campus life, or academic guidance."
       });
     }
 
+    // Contact
     if (hasAny(["contact", "phone", "call", "email"])) {
       return res.json({
         reply:
-          `📞 Phone: ${KB.college.phone}\n` +
-          `📧 Email: ${KB.college.email}\n` +
-          `📍 Address: ${KB.college.address}`,
+          `📞 Phone: ${COLLEGE.phone}\n` +
+          `📧 Email: ${COLLEGE.email}\n` +
+          `📍 Address: ${COLLEGE.address}`,
         links: [
-          { label: "Call College", url: `tel:${KB.college.phone}` },
-          { label: "Email College", url: `mailto:${KB.college.email}` },
-          { label: "Open in Google Maps", url: KB.college.maps }
+          { label: "Call College", url: `tel:${COLLEGE.phone}` },
+          { label: "Email College", url: `mailto:${COLLEGE.email}` },
+          { label: "Open in Google Maps", url: COLLEGE.maps }
         ]
       });
     }
 
+    // Location
     if (hasAny(["location", "address", "where"])) {
       return res.json({
-        reply: `📍 ${KB.college.address}`,
-        links: [{ label: "Open in Google Maps", url: KB.college.maps }]
+        reply: `📍 ${COLLEGE.address}`,
+        links: [{ label: "Open in Google Maps", url: COLLEGE.maps }]
+      });
+    }
+
+    // Notes
+    if (hasAny(["notes", "study material", "question paper", "pdf"])) {
+      return res.json({
+        reply: "📚 Study materials and question papers:",
+        links: [{ label: "Open Notes", url: COLLEGE.notes }]
+      });
+    }
+
+    // Simple course keywords
+    if (hasAny(["bca"])) {
+      return res.json({
+        reply:
+          "🎓 BCA (Bachelor of Computer Applications)\n\n" +
+          "A 3-year undergraduate program focused on programming, software development, and IT fundamentals."
+      });
+    }
+
+    if (hasAny(["bcom", "commerce"])) {
+      return res.json({
+        reply:
+          "🎓 B.Com (Bachelor of Commerce)\n\n" +
+          "Focuses on accounting, finance, taxation, and business management."
+      });
+    }
+
+    if (hasAny(["bba"])) {
+      return res.json({
+        reply:
+          "🎓 BBA (Bachelor of Business Administration)\n\n" +
+          "Develops management, leadership, and entrepreneurial skills."
       });
     }
 
     /* =====================================================
-       AI FALLBACK — THIS IS THE BRAIN
-       Uses FULL official college data
+       AI FALLBACK — THIS IS WHERE AI SAVES YOU
+       Uses FULL college-info.txt
     ===================================================== */
-
     try {
       const groqRes = await fetch(
         "https://api.groq.com/openai/v1/chat/completions",
@@ -107,17 +145,18 @@ export default async function handler(req, res) {
                 content:
 `You are the official AI assistant for MIT First Grade College, Mysuru.
 
-You are provided with the COMPLETE official information of the college below.
-This information must be treated as the source of truth.
+You are given COMPLETE official information about the college below.
+This information is the SOURCE OF TRUTH.
 
 RULES:
-- Answer questions related to academics, courses, faculty, safety, anti-ragging,
-  committees, campus life, placements, and student support.
-- Use the college information below FIRST.
-- If the question is experiential (example: "are teachers friendly"),
-  answer in a balanced, realistic manner based on academic practices.
-- Do NOT invent rankings, salaries, or guarantees.
-- Do NOT refuse if the topic is clearly related to college life or studies.
+- Answer ALL questions related to:
+  courses, admissions, affiliation, trust, safety, anti-ragging,
+  faculty, studies, campus life, student support, placements.
+- Use the information below first.
+- For opinion questions (teachers friendly, campus life, should I join),
+  give balanced, realistic guidance.
+- DO NOT say "I don’t know" or "not available" for college-related topics.
+- DO NOT invent rankings, salaries, or guarantees.
 
 COLLEGE INFORMATION:
 ${COLLEGE_CORPUS}
@@ -148,11 +187,11 @@ ${COLLEGE_CORPUS}
     ===================================================== */
     return res.json({
       reply:
-        "I can help with questions related to MIT First Grade College including courses, studies, safety, faculty, and campus life."
+        "I can help with questions related to MIT First Grade College including courses, admissions, safety, faculty, and academic guidance."
     });
 
   } catch (err) {
-    console.error("CHATBOT ERROR:", err);
+    console.error("SERVER ERROR:", err);
     return res.json({
       reply: "Something went wrong. Please try again later."
     });
