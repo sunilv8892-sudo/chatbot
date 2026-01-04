@@ -1,3 +1,11 @@
+import fs from "fs";
+import path from "path";
+
+const COLLEGE_CORPUS = fs.readFileSync(
+  path.join(process.cwd(), "api", "college-info.txt"),
+  "utf8"
+);
+
 export default async function handler(req, res) {
   try {
     /* =====================================================
@@ -28,135 +36,34 @@ export default async function handler(req, res) {
     const hasAny = (arr) => arr.some(w => q.includes(w));
 
     /* =====================================================
-       SCOPE CHECK — ONLY COLLEGE / STUDY QUESTIONS GO TO AI
-    ===================================================== */
-    function isCollegeRelated(q) {
-      const collegeWords = [
-        "college", "campus", "course", "courses", "degree",
-        "admission", "eligibility", "study", "studies",
-        "student", "faculty", "teacher", "lecturer",
-        "principal", "department", "class", "syllabus",
-        "exam", "semester", "notes", "placement",
-        "bca", "bcom", "bba", "commerce", "computer"
-      ];
-      return collegeWords.some(w => q.includes(w));
-    }
-
-    /* =====================================================
-       STATIC KNOWLEDGE BASE (SOURCE OF TRUTH)
+       STATIC KNOWLEDGE (QUICK FACTS)
     ===================================================== */
     const KB = {
       college: {
         name: "MIT First Grade College",
         city: "Mysuru",
-        address:
-          "Mananthavadi Road, Vidyaranyapura, Mysuru – 570008, Karnataka",
         phone: "0821 233 1722",
         email: "chandrajithmmca@mitmysore.in",
+        address:
+          "Mananthavadi Road, Vidyaranyapura, Mysuru – 570008, Karnataka",
         maps:
-          "https://www.google.com/maps/search/?api=1&query=MIT+First+Grade+College+Mysuru",
-        about:
-          "MIT First Grade College is an undergraduate degree college in Mysuru offering Arts, Commerce, and Computer Applications programs under the University of Mysore."
-      },
-
-      courses: {
-        bca: {
-          title: "Bachelor of Computer Applications (BCA)",
-          duration: "3 years (6 semesters)",
-          eligibility:
-            "+2 / PUC with Mathematics / Computer Science / Business Mathematics / Accountancy OR 3-year diploma after SSLC",
-          overview:
-            "BCA focuses on computer applications, programming, data structures, software development, and IT fundamentals.",
-          careers:
-            "Software Developer, Web Developer, System Administrator, IT Support, Higher studies (MCA, M.Sc.)"
-        },
-
-        bcom: {
-          title: "Bachelor of Commerce (B.Com)",
-          duration: "3 years (6 semesters)",
-          eligibility:
-            "PUC / 10+2 in any discipline",
-          overview:
-            "B.Com covers accounting, finance, taxation, business law, and management.",
-          careers:
-            "Accounting, Banking, Finance, MBA, M.Com, CA, CS"
-        },
-
-        bba: {
-          title: "Bachelor of Business Administration (BBA)",
-          duration: "3 years (6 semesters)",
-          eligibility:
-            "PUC / 10+2 or equivalent",
-          overview:
-            "BBA develops management, leadership, and entrepreneurial skills.",
-          careers:
-            "Management, Marketing, HR, MBA, Entrepreneurship"
-        }
-      },
-
-      staff: {
-        principal: {
-          name: "Dr. Chandrajit Mohan",
-          qualification: "MCA, Ph.D., KSET",
-          experience: "15+ years",
-          specialization:
-            "Computer Vision, Machine Learning, MIS, Programming Languages",
-          email: "chandrajithmmca@mitmysore.in"
-        }
-      },
-
-      resources: {
-        notes:
-          "https://drive.google.com/drive/folders/1bTRaNQdcS5d9Bdxwzi9s5_R8QJZSZvRD"
+          "https://www.google.com/maps/search/?api=1&query=MIT+First+Grade+College+Mysuru"
       }
     };
 
     /* =====================================================
-       CONTEXT GIVEN TO AI (STRICT)
-    ===================================================== */
-    const collegeContextForAI = `
-College Name: ${KB.college.name}
-Location: ${KB.college.city}, Karnataka
-Address: ${KB.college.address}
-Phone: ${KB.college.phone}
-Email: ${KB.college.email}
-
-Courses:
-BCA: ${KB.courses.bca.overview}
-B.Com: ${KB.courses.bcom.overview}
-BBA: ${KB.courses.bba.overview}
-
-Principal:
-${KB.staff.principal.name}
-Qualification: ${KB.staff.principal.qualification}
-Experience: ${KB.staff.principal.experience}
-Specialization: ${KB.staff.principal.specialization}
-
-RULES:
-- Use ONLY the above information
-- Do NOT invent facts
-- If info is missing, say it is not officially available
-`;
-
-    /* =====================================================
-       STATIC RESPONSES (NO AI)
+       STATIC RESPONSES (FAST & RELIABLE)
     ===================================================== */
 
-    // Greeting (only short greetings)
     if (hasAny(["hi", "hello", "hey"]) && q.length <= 5) {
       return res.json({
         reply:
-          "Hello 👋 I’m the MIT First Grade College chatbot.\n\n" +
-          "You can ask about admissions, courses, eligibility, faculty, or campus life.",
-        links: [
-          { label: "Admissions", url: "https://mitfgc.in/admission/" },
-          { label: "Courses", url: "https://mitfgc.in/courses/" }
-        ]
+          "Hello 👋 I’m the MIT First Grade College AI assistant.\n\n" +
+          "You can ask me anything about courses, studies, faculty, safety, admissions, or campus life."
       });
     }
 
-    // Contact
-    if (hasAny(["contact", "phone", "call", "email", "reach"])) {
+    if (hasAny(["contact", "phone", "call", "email"])) {
       return res.json({
         reply:
           `📞 Phone: ${KB.college.phone}\n` +
@@ -170,7 +77,6 @@ RULES:
       });
     }
 
-    // Location
     if (hasAny(["location", "address", "where"])) {
       return res.json({
         reply: `📍 ${KB.college.address}`,
@@ -178,115 +84,72 @@ RULES:
       });
     }
 
-    // Notes
-    if (hasAny(["notes", "study material", "question paper", "pdf"])) {
-      return res.json({
-        reply: "📚 Study materials and question papers:",
-        links: [{ label: "Open Notes", url: KB.resources.notes }]
-      });
-    }
+    /* =====================================================
+       AI FALLBACK — THIS IS THE BRAIN
+       Uses FULL official college data
+    ===================================================== */
 
-    // Courses
-    if (hasAny(["bca"])) {
-      const c = KB.courses.bca;
-      return res.json({ reply: `${c.title}\n\n${c.overview}\n\nCareers: ${c.careers}` });
-    }
-
-    if (hasAny(["bcom", "commerce"])) {
-      const c = KB.courses.bcom;
-      return res.json({ reply: `${c.title}\n\n${c.overview}\n\nCareers: ${c.careers}` });
-    }
-
-    if (hasAny(["bba"])) {
-      const c = KB.courses.bba;
-      return res.json({ reply: `${c.title}\n\n${c.overview}\n\nCareers: ${c.careers}` });
-    }
-
-    // Principal
-    if (hasAny(["principal"])) {
-      const p = KB.staff.principal;
-      return res.json({
-        reply:
-          `Principal: ${p.name}\n` +
-          `Qualification: ${p.qualification}\n` +
-          `Experience: ${p.experience}\n` +
-          `Specialization: ${p.specialization}`
-      });
-    }
-
-/* =====================================================
-   AI FALLBACK — USE FULL COLLEGE DATA
-   (ONLY WHEN STATIC RULES FAIL)
-===================================================== */
-
-try {
-  const groqRes = await fetch(
-    "https://api.groq.com/openai/v1/chat/completions",
-    {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
-      },
-      body: JSON.stringify({
-        model: "llama-3.1-8b-instant",
-        temperature: 0.4,
-        messages: [
-          {
-            role: "system",
-            content:
+    try {
+      const groqRes = await fetch(
+        "https://api.groq.com/openai/v1/chat/completions",
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
+          },
+          body: JSON.stringify({
+            model: "llama-3.1-8b-instant",
+            temperature: 0.4,
+            messages: [
+              {
+                role: "system",
+                content:
 `You are the official AI assistant for MIT First Grade College, Mysuru.
 
 You are provided with the COMPLETE official information of the college below.
-This information is authoritative and must be treated as the source of truth.
+This information must be treated as the source of truth.
 
 RULES:
-- Answer ALL questions related to:
-  • college details
-  • courses and studies
-  • faculty and teaching approach
-  • safety, anti-ragging, committees
-  • student life, academics, placements
-- Use the information below FIRST.
-- If the question is experiential (e.g. "are teachers friendly"),
-  give a balanced, realistic answer based on academic practices.
-- Do NOT say "information not available" if the topic is clearly related.
+- Answer questions related to academics, courses, faculty, safety, anti-ragging,
+  committees, campus life, placements, and student support.
+- Use the college information below FIRST.
+- If the question is experiential (example: "are teachers friendly"),
+  answer in a balanced, realistic manner based on academic practices.
 - Do NOT invent rankings, salaries, or guarantees.
-- Keep answers human, helpful, and clear.
+- Do NOT refuse if the topic is clearly related to college life or studies.
 
 COLLEGE INFORMATION:
 ${COLLEGE_CORPUS}
 `
-          },
-          {
-            role: "user",
-            content: message
-          }
-        ]
-      })
+              },
+              {
+                role: "user",
+                content: message
+              }
+            ]
+          })
+        }
+      );
+
+      const data = await groqRes.json();
+      const aiText = data?.choices?.[0]?.message?.content;
+
+      if (aiText && aiText.trim().length > 10) {
+        return res.json({ reply: aiText.trim() });
+      }
+
+    } catch (err) {
+      console.error("AI ERROR:", err);
     }
-  );
 
-  const data = await groqRes.json();
-  const aiText = data?.choices?.[0]?.message?.content;
-
-  if (aiText && aiText.trim().length > 10) {
-    return res.json({ reply: aiText.trim() });
-  }
-
-} catch (err) {
-  console.error("AI ERROR:", err);
-}
-
-
-/* =====================================================
-   FINAL SAFE STATIC FALLBACK
-===================================================== */
-return res.json({
-  reply:
-    "I can help with official information about MIT First Grade College such as courses, admissions, faculty, campus, and academic guidance."
-});
-
+    /* =====================================================
+       FINAL FALLBACK (VERY RARE)
+    ===================================================== */
+    return res.json({
+      reply:
+        "I can help with questions related to MIT First Grade College including courses, studies, safety, faculty, and campus life."
+    });
 
   } catch (err) {
     console.error("CHATBOT ERROR:", err);
@@ -295,5 +158,3 @@ return res.json({
     });
   }
 }
-
-
