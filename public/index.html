@@ -19,7 +19,6 @@
 <!-- CHAT TOGGLE BUTTON -->
 <div id="chat-toggle" class="ai-pill-horizontal">
   <div class="ai-icon">
-    <!-- AI SVG ICON -->
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
       <path d="M12 2a4 4 0 0 0-4 4v1H7a3 3 0 0 0 0 6h1v1a4 4 0 0 0 8 0v-1h1a3 3 0 0 0 0-6h-1V6a4 4 0 0 0-4-4Z"
         stroke="white" stroke-width="1.6"/>
@@ -30,12 +29,14 @@
   <span class="ai-label">Ask MIT AI</span>
 </div>
 
-
-
 <!-- CHAT WINDOW -->
 <div id="chatbox">
   <div id="chat-header">
     <span>MIT FGC AI Assistant</span>
+
+    <!-- GOOGLE TRANSLATE INSIDE CHAT -->
+    <div id="google_translate_element"></div>
+
     <span id="close-chat">✖</span>
   </div>
 
@@ -52,7 +53,22 @@
 </div>
 
 <script src="script.js"></script>
+
+<!-- GOOGLE TRANSLATE SCRIPT -->
+<script>
+function googleTranslateElementInit() {
+  new google.translate.TranslateElement(
+    {
+      pageLanguage: 'en',
+      includedLanguages: 'en,kn,hi,ta,te,ml',
+      layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+    },
+    'google_translate_element'
+  );
+}
+</script>
+
+<script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit"></script>
+
 </body>
 </html>
-
-
