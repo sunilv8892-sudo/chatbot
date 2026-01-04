@@ -87,18 +87,6 @@ html, body {
   50% { transform: translateY(-6px); }
 }
 
-
-/* Floating animation */
-@keyframes floatPill {
-  0%, 100% {
-    transform: translateY(0);
-  }
-  50% {
-    transform: translateY(-8px);
-  }
-}
-
-
 /* Chat window */
 #chatbox {
   position: fixed;
@@ -228,5 +216,6 @@ html, body {
 }
 
 .hidden { display: none; }
+
 
 
