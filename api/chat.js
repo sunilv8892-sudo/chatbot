@@ -1,25 +1,31 @@
+// ==============================
+// PART 1 / 4
+// api/chat.js
+// ==============================
+
 import fs from "fs";
 import path from "path";
 
+// ==============================
+// LOAD COLLEGE INFO (SINGLE SOURCE OF TRUTH)
+// ==============================
 const COLLEGE_CORPUS = fs.readFileSync(
   path.join(process.cwd(), "data", "college-info.txt"),
   "utf8"
 );
 
-// 👇 ADD THIS LINE HERE (TEMPORARY)
-console.log("COLLEGE CORPUS LENGTH:", COLLEGE_CORPUS.length);
-/* =====================================================
-   MAIN HANDLER
-===================================================== */
+// ==============================
+// MAIN HANDLER
+// ==============================
 export default async function handler(req, res) {
   try {
     if (req.method !== "POST") {
       return res.status(405).json({ reply: "Method not allowed" });
     }
 
-    /* =====================================================
-       INPUT NORMALIZATION
-    ===================================================== */
+    // ==============================
+    // INPUT NORMALIZATION
+    // ==============================
     const message =
       typeof req.body === "string"
         ? req.body
@@ -35,11 +41,11 @@ export default async function handler(req, res) {
       return res.json({ reply: "Please type your question." });
     }
 
-    const hasAny = (arr) => arr.some(w => q.includes(w));
+    const hasAny = (arr) => arr.some((w) => q.includes(w));
 
-    /* =====================================================
-       STATIC DATA (FAST & RELIABLE)
-    ===================================================== */
+    // ==============================
+    // CORE STATIC DATA (FAST FACTS)
+    // ==============================
     const COLLEGE = {
       name: "MIT First Grade College",
       city: "Mysuru",
@@ -50,24 +56,30 @@ export default async function handler(req, res) {
       maps:
         "https://www.google.com/maps/search/?api=1&query=MIT+First+Grade+College+Mysuru",
       notes:
-        "https://drive.google.com/drive/folders/1bTRaNQdcS5d9Bdxwzi9s5_R8QJZSZvRD"
+        "https://drive.google.com/drive/folders/1bTRaNQdcS5d9Bdxwzi9s5_R8QJZSZvRD",
+      admission: "https://mitfgc.in/admission/",
+      courses: "https://mitfgc.in/courses/"
     };
 
-    /* =====================================================
-       STATIC ANSWERS (DO NOT TOUCH – THESE WORK)
-    ===================================================== */
+    // ==============================
+    // STATIC RESPONSES (HIGH CONFIDENCE)
+    // ==============================
 
-    // Greeting
+    // Greetings
     if (hasAny(["hi", "hello", "hey"]) && q.length <= 6) {
       return res.json({
         reply:
-          "Hello 👋 I’m the MIT First Grade College AI assistant.\n\n" +
-          "You can ask me about courses, admissions, safety, faculty, campus life, or academic guidance."
+          "Hello 👋 I’m the MIT First Grade College chatbot.\n\n" +
+          "You can ask me about admissions, courses, faculty, safety, campus life, or academic guidance.",
+        links: [
+          { label: "Admissions", url: COLLEGE.admission },
+          { label: "Courses", url: COLLEGE.courses }
+        ]
       });
     }
 
     // Contact
-    if (hasAny(["contact", "phone", "call", "email"])) {
+    if (hasAny(["contact", "phone", "call", "email", "reach"])) {
       return res.json({
         reply:
           `📞 Phone: ${COLLEGE.phone}\n` +
@@ -97,7 +109,32 @@ export default async function handler(req, res) {
       });
     }
 
-    // Simple course keywords
+    // Admissions
+    if (hasAny(["admission", "apply", "join"])) {
+      return res.json({
+        reply:
+          "📝 Admissions at MIT First Grade College are based on merit as per University of Mysore guidelines.",
+        links: [{ label: "Apply for Admission", url: COLLEGE.admission }]
+      });
+    }
+
+    // University affiliation (PINNED FACT)
+    if (hasAny(["university", "affiliated", "affiliation"])) {
+      return res.json({
+        reply:
+          "MIT First Grade College is affiliated to the University of Mysore."
+      });
+    }
+
+    // Trust
+    if (hasAny(["trust", "management"])) {
+      return res.json({
+        reply:
+          "MIT First Grade College is managed by Maharaja Education Trust (R), Mysuru."
+      });
+    }
+
+    // Courses basic
     if (hasAny(["bca"])) {
       return res.json({
         reply:
@@ -122,10 +159,110 @@ export default async function handler(req, res) {
       });
     }
 
-    /* =====================================================
-       AI FALLBACK — THIS IS WHERE AI SAVES YOU
-       Uses FULL college-info.txt
-    ===================================================== */
+    // ==============================
+    // CONTINUE IN PART 2
+    // ==============================
+
+// ==============================
+// PART 2 / 4
+// CONTINUATION OF api/chat.js
+// ==============================
+
+    // ==============================
+    // SAFETY, DISCIPLINE, STUDENT SUPPORT (STATIC + AI ASSIST)
+    // ==============================
+
+    if (hasAny(["anti ragging", "ragging", "safety", "safe", "harassment"])) {
+      return res.json({
+        reply:
+          "MIT First Grade College has an Anti-Ragging Cell and student welfare committees to ensure a safe and disciplined campus environment. Ragging is strictly prohibited as per UGC norms."
+      });
+    }
+
+    if (hasAny(["grievance", "complaint", "problem", "issue"])) {
+      return res.json({
+        reply:
+          "The college has a Grievance Redressal mechanism to address academic and administrative concerns of students."
+      });
+    }
+
+    if (hasAny(["faculty", "teachers", "lecturers", "staff"])) {
+      return res.json({
+        reply:
+          "MIT First Grade College has qualified and experienced faculty members. Many faculty hold postgraduate and doctoral degrees and focus on academic mentoring and student development."
+      });
+    }
+
+    if (hasAny(["principal", "head of college"])) {
+      return res.json({
+        reply:
+          "The college is headed by an experienced principal with strong academic and administrative background."
+      });
+    }
+
+    if (hasAny(["library", "books", "reading"])) {
+      return res.json({
+        reply:
+          "The college library provides access to textbooks, reference books, journals, and e-resources to support academic learning."
+      });
+    }
+
+    if (hasAny(["placement", "job", "career", "future"])) {
+      return res.json({
+        reply:
+          "The college provides placement assistance, career guidance, and skill development programs to help students prepare for employment or higher studies."
+      });
+    }
+
+    if (hasAny(["campus life", "college life", "environment"])) {
+      return res.json({
+        reply:
+          "Campus life at MIT First Grade College focuses on academics, co-curricular activities, student engagement programs, and overall personal development."
+      });
+    }
+
+    if (hasAny(["sports", "games", "physical"])) {
+      return res.json({
+        reply:
+          "The college encourages student participation in sports and physical activities as part of holistic development."
+      });
+    }
+
+    if (hasAny(["nss", "social service", "community"])) {
+      return res.json({
+        reply:
+          "The college promotes social responsibility through NSS and community engagement activities."
+      });
+    }
+
+    // ==============================
+    // COURSE SELECTION GUIDANCE (STATIC LOGIC)
+    // ==============================
+
+    if (hasAny(["which course", "what course", "course should i choose"])) {
+      return res.json({
+        reply:
+          "Choosing a course depends on your interests and career goals:\n\n" +
+          "• Choose BCA if you are interested in computers and IT\n" +
+          "• Choose B.Com if you are interested in finance, accounting, or business\n" +
+          "• Choose BBA if you are interested in management and leadership roles"
+      });
+    }
+
+    // ==============================
+    // CONTINUE IN PART 3
+    // ==============================
+
+// ==============================
+// PART 3 / 4
+// CONTINUATION OF api/chat.js
+// ==============================
+
+    // ==============================
+    // AI FALLBACK — ANSWERS EVERYTHING ELSE
+    // Uses FULL college-info.txt
+    // ==============================
+
     try {
       const groqRes = await fetch(
         "https://api.groq.com/openai/v1/chat/completions",
@@ -142,27 +279,26 @@ export default async function handler(req, res) {
               {
                 role: "system",
                 content:
-{
-  role: "system",
-  content:
 `You are an information extraction and guidance assistant
 for MIT First Grade College, Mysuru.
 
 You are provided with OFFICIAL COLLEGE DATA below.
+This data is the single source of truth.
 
-IMPORTANT RULES:
-- If a question asks for a FACT (affiliation, trust, approvals),
+MANDATORY RULES:
+- If a question asks for a FACT (affiliation, trust, approvals, facilities),
   extract the exact answer from the data.
-- Do NOT give generic fallback messages for factual questions.
-- If the fact exists, answer it clearly in one sentence.
-- For guidance or opinion questions, answer naturally using the data.
+- Never reply with generic help messages for factual questions.
+- For opinion or guidance questions (teachers friendly, campus life,
+  should I join, which course is better), answer naturally
+  using the data as context.
+- Do NOT invent rankings, salaries, or guarantees.
+- If the answer exists in the data, you MUST answer it.
 
 COLLEGE DATA:
 ${COLLEGE_CORPUS}
 `
-}
-
-
+              },
               {
                 role: "user",
                 content: message
@@ -175,32 +311,39 @@ ${COLLEGE_CORPUS}
       const data = await groqRes.json();
       const aiText = data?.choices?.[0]?.message?.content;
 
-if (aiText) {
-  return res.json({ reply: aiText.trim() });
-}
-
+      if (aiText) {
+        return res.json({ reply: aiText.trim() });
+      }
 
     } catch (err) {
       console.error("AI ERROR:", err);
     }
 
-    /* =====================================================
-       FINAL FALLBACK (VERY RARE)
-    ===================================================== */
+    // ==============================
+    // CONTINUE IN PART 4
+    // ==============================
+
+// ==============================
+// PART 4 / 4
+// FINAL FALLBACK + CLOSING
+// ==============================
+
+    // ==============================
+    // FINAL SAFE FALLBACK (RARE CASE)
+    // ==============================
     return res.json({
       reply:
-        "I can help with questions related to MIT First Grade College including courses, admissions, safety, faculty, and academic guidance."
+        "I can help with information about MIT First Grade College including courses, admissions, affiliation, faculty, safety, campus life, and academic guidance. Please ask a specific question."
     });
 
   } catch (err) {
     console.error("SERVER ERROR:", err);
     return res.json({
-      reply: "Something went wrong. Please try again later."
+      reply: "Server error. Please try again."
     });
   }
 }
 
-
-
-
-
+// ==============================
+// END OF FILE
+// ==============================
