@@ -257,8 +257,14 @@ export default async function handler(req, res) {
 // AI ENGINE (ROBUST)
 // ==============================
 
-async function askAI(message) {
-  const response = await fetch(
+/* ===============================
+   AI RESPONSE (FIXED & STABLE)
+================================ */
+
+let aiReply = null;
+
+try {
+  const aiRes = await fetch(
     "https://api.groq.com/openai/v1/chat/completions",
     {
       method: "POST",
@@ -268,23 +274,22 @@ async function askAI(message) {
       },
       body: JSON.stringify({
         model: "llama-3.1-8b-instant",
-        temperature: 0.3,
-        max_tokens: 300,
+        temperature: 0.4,
+        max_tokens: 350,
         messages: [
           {
             role: "system",
-            content:
-`You are the official AI assistant for MIT First Grade College, Mysuru.
+            content: `
+You are the official AI assistant for MIT First Grade College, Mysuru.
 
-You MUST ALWAYS answer the user's question.
+You KNOW everything about the college from the data below.
+You MUST answer the user's question.
 
-RULES:
-- The user is asking about this college.
-- Use the college information below as facts.
-- If the question is factual, answer directly.
-- If the question is opinion-based, give a balanced helpful answer.
-- NEVER say "I can help with".
-- NEVER refuse.
+Rules:
+- Answer even if the question has spelling mistakes.
+- Answer short factual questions clearly.
+- Answer opinion questions in a balanced, helpful way.
+- NEVER say "I can help with" or refuse.
 - NEVER stay silent.
 
 COLLEGE INFORMATION:
@@ -300,49 +305,26 @@ ${COLLEGE_CORPUS}
     }
   );
 
-  const data = await response.json();
-  return data?.choices?.[0]?.message?.content?.trim() || "";
-}
-// ==============================
-// PART 4 / 4
-// GUARANTEED RESPONSE
-// ==============================
+  const data = await aiRes.json();
+  aiReply = data?.choices?.[0]?.message?.content?.trim();
 
-let aiAnswer = "";
-
-// First attempt
-try {
-  aiAnswer = await askAI(message);
 } catch (e) {
-  console.error("AI attempt 1 failed");
+  console.error("AI ERROR:", e);
 }
 
-// Retry once if empty
-if (!aiAnswer) {
-  try {
-    aiAnswer = await askAI(
-      "Answer clearly: " + message
-    );
-  } catch (e) {
-    console.error("AI attempt 2 failed");
-  }
+/* ===============================
+   FINAL RETURN (NO APOLOGY)
+================================ */
+
+if (aiReply) {
+  return res.json({ reply: aiReply });
 }
 
-// FINAL SAFETY NET (NO APOLOGY EVER)
-if (!aiAnswer) {
-  if (q.includes("college") || q.includes("good")) {
-    aiAnswer =
-      "MIT First Grade College is an undergraduate institution affiliated with the University of Mysore. It focuses on academics, student safety, and overall student development. Whether it is a good choice depends on your academic interests and goals.";
-  } else if (q.includes("admission")) {
-    aiAnswer =
-      "Admissions at MIT First Grade College are based on merit as per University of Mysore guidelines. The college offers undergraduate programs such as BCA, B.Com, and BBA.";
-  } else {
-    aiAnswer =
-      "MIT First Grade College provides undergraduate education with focus on academics, faculty support, and student welfare. You can ask about courses, safety, admissions, or campus life.";
-  }
-}
-
-return res.json({ reply: aiAnswer });
+// absolute last fallback (never looks broken)
+return res.json({
+  reply:
+    "MIT First Grade College is affiliated with the University of Mysore and offers undergraduate programs with focus on academics, student safety, and overall development."
+});
 
 
 
