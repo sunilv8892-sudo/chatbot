@@ -173,9 +173,10 @@ ${COLLEGE_CORPUS}
       const data = await groqRes.json();
       const aiText = data?.choices?.[0]?.message?.content;
 
-      if (aiText && aiText.trim().length > 10) {
-        return res.json({ reply: aiText.trim() });
-      }
+if (aiText) {
+  return res.json({ reply: aiText.trim() });
+}
+
 
     } catch (err) {
       console.error("AI ERROR:", err);
@@ -196,5 +197,6 @@ ${COLLEGE_CORPUS}
     });
   }
 }
+
 
 
