@@ -214,52 +214,70 @@ RULES:
       });
     }
 
- /* =====================================================
-   AI FALLBACK — ONLY IF STATIC FAILED & COLLEGE RELATED
+/* =====================================================
+   AI FALLBACK — USE FULL COLLEGE DATA
+   (ONLY WHEN STATIC RULES FAIL)
 ===================================================== */
-if (isCollegeRelated(q)) {
-  try {
-    const groqRes = await fetch(
-      "https://api.groq.com/openai/v1/chat/completions",
-      {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
-        },
-        body: JSON.stringify({
-          model: "llama-3.1-8b-instant",
-          temperature: 0.5,
-          messages: [
-            {
-              role: "system",
-              content:
-                "You are an official college assistant for MIT First Grade College.\n" +
-                "Here is the official information available:\n\n" +
-                collegeContextForAI +
-                "\nAnswer naturally, honestly, and helpfully. " +
-                "If someone asks for advice (like which course to choose), " +
-                "guide them based on interests and career goals, not fake facts."
-            },
-            {
-              role: "user",
-              content: message
-            }
-          ]
-        })
-      }
-    );
 
-    const data = await groqRes.json();
-    const aiText = data?.choices?.[0]?.message?.content;
+try {
+  const groqRes = await fetch(
+    "https://api.groq.com/openai/v1/chat/completions",
+    {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
+      },
+      body: JSON.stringify({
+        model: "llama-3.1-8b-instant",
+        temperature: 0.4,
+        messages: [
+          {
+            role: "system",
+            content:
+`You are the official AI assistant for MIT First Grade College, Mysuru.
 
-    if (aiText && aiText.trim().length > 10) {
-      return res.json({ reply: aiText.trim() });
+You are provided with the COMPLETE official information of the college below.
+This information is authoritative and must be treated as the source of truth.
+
+RULES:
+- Answer ALL questions related to:
+  • college details
+  • courses and studies
+  • faculty and teaching approach
+  • safety, anti-ragging, committees
+  • student life, academics, placements
+- Use the information below FIRST.
+- If the question is experiential (e.g. "are teachers friendly"),
+  give a balanced, realistic answer based on academic practices.
+- Do NOT say "information not available" if the topic is clearly related.
+- Do NOT invent rankings, salaries, or guarantees.
+- Keep answers human, helpful, and clear.
+
+COLLEGE INFORMATION:
+${COLLEGE_CORPUS}
+`
+          },
+          {
+            role: "user",
+            content: message
+          }
+        ]
+      })
     }
-  } catch (err) {
-    console.error("GROQ ERROR:", err);
+  );
+
+  const data = await groqRes.json();
+  const aiText = data?.choices?.[0]?.message?.content;
+
+  if (aiText && aiText.trim().length > 10) {
+    return res.json({ reply: aiText.trim() });
   }
+
+} catch (err) {
+  console.error("AI ERROR:", err);
 }
+
 
 /* =====================================================
    FINAL SAFE STATIC FALLBACK
@@ -277,4 +295,5 @@ return res.json({
     });
   }
 }
+
 
