@@ -5,27 +5,18 @@ document.addEventListener("DOMContentLoaded", () => {
   const sendBtn = document.getElementById("send-btn");
   const input = document.getElementById("input");
   const messages = document.getElementById("messages");
+  const typing = document.getElementById("typing-indicator");
 
-  // initial state
   chatbox.style.display = "none";
 
-  // toggle open/close
-  toggle.addEventListener("click", () => {
-    chatbox.style.display =
-      chatbox.style.display === "none" ? "flex" : "none";
-  });
+  toggle.onclick = () => {
+    chatbox.style.display = chatbox.style.display === "none" ? "flex" : "none";
+  };
 
-  // close button
-  closeBtn.addEventListener("click", () => {
-    chatbox.style.display = "none";
-  });
+  closeBtn.onclick = () => chatbox.style.display = "none";
 
-  // send message
-  sendBtn.addEventListener("click", sendMessage);
-
-  input.addEventListener("keydown", (e) => {
-    if (e.key === "Enter") sendMessage();
-  });
+  sendBtn.onclick = sendMessage;
+  input.addEventListener("keydown", e => e.key === "Enter" && sendMessage());
 
   function sendMessage() {
     const text = input.value.trim();
@@ -33,6 +24,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
     addMessage(text, "user");
     input.value = "";
+    setLoading(true);
 
     fetch("/api/chat", {
       method: "POST",
@@ -41,43 +33,38 @@ document.addEventListener("DOMContentLoaded", () => {
     })
       .then(res => res.json())
       .then(data => {
+        setLoading(false);
         addMessage(data.reply, "bot", data.links || []);
       })
-      .catch(() => addMessage("Server error.", "bot"));
+      .catch(() => {
+        setLoading(false);
+        addMessage("Server error. Please try again.", "bot");
+      });
   }
 
-  // 🔥 FIXED: SUPPORTS CLICKABLE BUTTONS
+  function setLoading(state) {
+    typing.classList.toggle("hidden", !state);
+    sendBtn.disabled = state;
+    input.disabled = state;
+  }
+
   function addMessage(text, type, links = []) {
     const div = document.createElement("div");
-    div.className = type;
+    div.className = `message ${type}`;
     div.textContent = text;
 
-    if (Array.isArray(links) && links.length > 0) {
-      const btnWrap = document.createElement("div");
-      btnWrap.style.marginTop = "8px";
-      btnWrap.style.display = "flex";
-      btnWrap.style.flexWrap = "wrap";
-      btnWrap.style.gap = "6px";
+    if (links.length) {
+      const wrap = document.createElement("div");
+      wrap.className = "link-wrap";
 
-      links.forEach(link => {
+      links.forEach(l => {
         const btn = document.createElement("button");
-        btn.textContent = link.label;
-        btn.style.background = "#002147";
-        btn.style.color = "#fff";
-        btn.style.border = "none";
-        btn.style.padding = "6px 10px";
-        btn.style.borderRadius = "6px";
-        btn.style.cursor = "pointer";
-        btn.style.fontSize = "13px";
-
-        btn.onclick = () => {
-          window.open(link.url, "_blank");
-        };
-
-        btnWrap.appendChild(btn);
+        btn.textContent = l.label;
+        btn.onclick = () => window.open(l.url, "_blank");
+        wrap.appendChild(btn);
       });
 
-      div.appendChild(btnWrap);
+      div.appendChild(wrap);
     }
 
     messages.appendChild(div);
