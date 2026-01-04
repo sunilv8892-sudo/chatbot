@@ -214,54 +214,61 @@ RULES:
       });
     }
 
-    /* =====================================================
-       AI FALLBACK — ONLY IF STATIC FAILED & COLLEGE RELATED
-    ===================================================== */
-    if (isCollegeRelated(q)) {
-      try {
-        const groqRes = await fetch(
-          "https://api.groq.com/openai/v1/chat/completions",
-          {
-            method: "POST",
-            headers: {
-              "Content-Type": "application/json",
-              "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
+ /* =====================================================
+   AI FALLBACK — ONLY IF STATIC FAILED & COLLEGE RELATED
+===================================================== */
+if (isCollegeRelated(q)) {
+  try {
+    const groqRes = await fetch(
+      "https://api.groq.com/openai/v1/chat/completions",
+      {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
+        },
+        body: JSON.stringify({
+          model: "llama-3.1-8b-instant",
+          temperature: 0.5,
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are an official college assistant for MIT First Grade College.\n" +
+                "Here is the official information available:\n\n" +
+                collegeContextForAI +
+                "\nAnswer naturally, honestly, and helpfully. " +
+                "If someone asks for advice (like which course to choose), " +
+                "guide them based on interests and career goals, not fake facts."
             },
-            body: JSON.stringify({
-              model: "llama-3.1-8b-instant",
-              temperature: 0.5,
-              messages: [
-                {
-                  role: "system",
-                  content:
-                    "You are an official college information assistant.\n" +
-                    "Do not guess or invent.\n\n" +
-                    collegeContextForAI
-                },
-                { role: "user", content: message }
-              ]
-            })
-          }
-        );
-
-        const data = await groqRes.json();
-        const aiText = data?.choices?.[0]?.message?.content;
-
-        if (aiText && aiText.trim().length > 20) {
-          return res.json({ reply: aiText.trim() });
-        }
-      } catch (err) {
-        console.error("GROQ ERROR:", err);
+            {
+              role: "user",
+              content: message
+            }
+          ]
+        })
       }
-    }
+    );
 
-    /* =====================================================
-       FINAL SAFE FALLBACK
-    ===================================================== */
-    return res.json({
-      reply:
-        "I can help with official information about MIT First Grade College such as courses, admissions, faculty, campus, and academic guidance."
-    });
+    const data = await groqRes.json();
+    const aiText = data?.choices?.[0]?.message?.content;
+
+    if (aiText && aiText.trim().length > 10) {
+      return res.json({ reply: aiText.trim() });
+    }
+  } catch (err) {
+    console.error("GROQ ERROR:", err);
+  }
+}
+
+/* =====================================================
+   FINAL SAFE STATIC FALLBACK
+===================================================== */
+return res.json({
+  reply:
+    "I can help with official information about MIT First Grade College such as courses, admissions, faculty, campus, and academic guidance."
+});
+
 
   } catch (err) {
     console.error("CHATBOT ERROR:", err);
@@ -270,3 +277,4 @@ RULES:
     });
   }
 }
+
