@@ -254,13 +254,22 @@ export default async function handler(req, res) {
     // ==============================
 
 // ==============================
-// PART 3 / 4
+// PART 3 / 4  (UPDATED – AI ALWAYS HANDLES COLLEGE QUESTIONS)
 // CONTINUATION OF api/chat.js
 // ==============================
 
+    /*
+      IMPORTANT CHANGE:
+      -----------------
+      • Static logic is now ONLY for UX (buttons, links, quick facts)
+      • AI is ALWAYS allowed to answer college-related questions
+      • No keyword gating
+      • No spelling sensitivity
+      • No length checks
+    */
+
     // ==============================
-    // AI FALLBACK — ANSWERS EVERYTHING ELSE
-    // Uses FULL college-info.txt
+    // AI FALLBACK — PRIMARY BRAIN
     // ==============================
 
     try {
@@ -274,28 +283,26 @@ export default async function handler(req, res) {
           },
           body: JSON.stringify({
             model: "llama-3.1-8b-instant",
-            temperature: 0.4,
+            temperature: 0.35,
             messages: [
               {
                 role: "system",
                 content:
-`You are an information extraction and guidance assistant
-for MIT First Grade College, Mysuru.
+`You are the official AI assistant for MIT First Grade College, Mysuru.
 
-You are provided with OFFICIAL COLLEGE DATA below.
-This data is the single source of truth.
+You are provided with COMPLETE OFFICIAL COLLEGE INFORMATION below.
+This data is the SINGLE SOURCE OF TRUTH.
 
-MANDATORY RULES:
-- If a question asks for a FACT (affiliation, trust, approvals, facilities),
-  extract the exact answer from the data.
-- Never reply with generic help messages for factual questions.
-- For opinion or guidance questions (teachers friendly, campus life,
-  should I join, which course is better), answer naturally
-  using the data as context.
-- Do NOT invent rankings, salaries, or guarantees.
-- If the answer exists in the data, you MUST answer it.
+CRITICAL INSTRUCTIONS:
+- Answer ALL college-related questions using the data.
+- Handle spelling mistakes, short questions, and informal language.
+- If a FACT exists (affiliation, trust, safety, committees), extract it clearly.
+- If the question is opinion-based (teachers friendly, campus life, should I join),
+  answer realistically and positively without exaggeration.
+- NEVER reply with generic fallback messages.
+- NEVER say "I can help with..." unless the question is totally unrelated.
 
-COLLEGE DATA:
+COLLEGE INFORMATION:
 ${COLLEGE_CORPUS}
 `
               },
@@ -311,7 +318,7 @@ ${COLLEGE_CORPUS}
       const data = await groqRes.json();
       const aiText = data?.choices?.[0]?.message?.content;
 
-      if (aiText) {
+      if (aiText && aiText.trim()) {
         return res.json({ reply: aiText.trim() });
       }
 
@@ -324,16 +331,20 @@ ${COLLEGE_CORPUS}
     // ==============================
 
 // ==============================
-// PART 4 / 4
-// FINAL FALLBACK + CLOSING
+// PART 4 / 4  (UPDATED – SMART FINAL FALLBACK)
 // ==============================
 
-    // ==============================
-    // FINAL SAFE FALLBACK (RARE CASE)
-    // ==============================
+    /*
+      This fallback should be RARE now.
+      It only triggers if:
+      • AI API fails
+      • Network error
+      • Invalid response
+    */
+
     return res.json({
       reply:
-        "I can help with information about MIT First Grade College including courses, admissions, affiliation, faculty, safety, campus life, and academic guidance. Please ask a specific question."
+        "Sorry, I couldn’t process that right now. You can ask me about admissions, courses, affiliation, safety, faculty, or campus life at MIT First Grade College."
     });
 
   } catch (err) {
@@ -347,3 +358,5 @@ ${COLLEGE_CORPUS}
 // ==============================
 // END OF FILE
 // ==============================
+
+
