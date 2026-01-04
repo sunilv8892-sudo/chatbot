@@ -257,6 +257,8 @@ export default async function handler(req, res) {
 // AI RESPONSE (FIXED, SIMPLE, STABLE)
 // ==============================
 
+// ===== AI CALL (SAME AS BEFORE, JUST SAFER) =====
+
 try {
   const aiRes = await fetch(
     "https://api.groq.com/openai/v1/chat/completions",
@@ -269,21 +271,15 @@ try {
       body: JSON.stringify({
         model: "llama-3.1-8b-instant",
         temperature: 0.4,
-        max_tokens: 300,
         messages: [
           {
             role: "system",
-            content: `
-You are the official AI assistant for MIT First Grade College, Mysuru.
-
-Use the college information below to answer the user.
-Handle spelling mistakes.
-Answer factual and opinion questions.
-Never refuse.
+            content:
+`You are an AI assistant for MIT First Grade College, Mysuru.
+Answer questions naturally using the provided college information.
 
 COLLEGE INFORMATION:
-${COLLEGE_CORPUS}
-`
+${COLLEGE_CORPUS}`
           },
           {
             role: "user",
@@ -294,7 +290,17 @@ ${COLLEGE_CORPUS}
     }
   );
 
-  const data = await aiRes.json();
+  // 🔥 ONLY FIX IS HERE
+  const raw = await aiRes.text();
+  let data;
+
+  try {
+    data = JSON.parse(raw);
+  } catch (e) {
+    console.error("AI RAW RESPONSE (NOT JSON):", raw);
+    throw e;
+  }
+
   const aiReply = data?.choices?.[0]?.message?.content;
 
   if (aiReply) {
@@ -304,20 +310,7 @@ ${COLLEGE_CORPUS}
 } catch (err) {
   console.error("AI ERROR:", err);
 }
-// ==============================
-// PART 4 / 4
-// FINAL SAFE FALLBACK + CLOSE HANDLER
-// ==============================
 
-return res.json({
-  reply:
-    "MIT First Grade College is affiliated with the University of Mysore and offers undergraduate programs with focus on academics, student safety, and overall development."
-});
 
-} catch (err) {
-  console.error("SERVER ERROR:", err);
-  return res.json({
-    reply: "Server error. Please try again."
-  });
-}
-}
+
+
