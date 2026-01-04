@@ -14,29 +14,65 @@ html, body {
   z-index: 1;
 }
 
-/* Floating toggle */
-#chat-toggle {
+/* ===============================
+   FUTURISTIC FLOATING AI BUTTON
+================================ */
+
+.ai-pill {
   position: fixed;
-  bottom: 24px;
   right: 24px;
-  width: 64px;
-  height: 64px;
-  background: radial-gradient(circle, #004aad, #002147);
-  color: white;
-  font-size: 28px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
+  bottom: 120px;
+  width: 54px;
+  height: 140px;
+  background: linear-gradient(
+    180deg,
+    #0b1d3a,
+    #002147,
+    #0b1d3a
+  );
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
   cursor: pointer;
   z-index: 9999;
-  box-shadow: 0 0 20px rgba(0,74,173,.7);
-  animation: float 3s ease-in-out infinite;
+  box-shadow:
+    0 0 15px rgba(0, 74, 173, 0.6),
+    inset 0 0 8px rgba(255,255,255,0.15);
+  transition: transform 0.25s ease, box-shadow 0.25s ease;
+  animation: floatPill 4s ease-in-out infinite;
 }
 
-@keyframes float {
-  0%,100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
+.ai-pill:hover {
+  transform: translateY(-6px) scale(1.04);
+  box-shadow:
+    0 0 28px rgba(0, 110, 255, 0.9),
+    inset 0 0 10px rgba(255,255,255,0.25);
 }
+
+.ai-text {
+  color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  letter-spacing: 1px;
+  text-align: center;
+  line-height: 1.3;
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+  opacity: 0.95;
+  user-select: none;
+}
+
+/* Floating animation */
+@keyframes floatPill {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-8px);
+  }
+}
+
 
 /* Chat window */
 #chatbox {
@@ -167,3 +203,4 @@ html, body {
 }
 
 .hidden { display: none; }
+
