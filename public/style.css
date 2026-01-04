@@ -14,14 +14,7 @@ html, body {
   z-index: 1;
 }
 
-/* ===============================
-   FUTURISTIC FLOATING AI BUTTON
-================================ */
-
-/* ===============================
-   HORIZONTAL AI PILL BUTTON
-================================ */
-
+/* Floating AI Button */
 .ai-pill-horizontal {
   position: fixed;
   right: 24px;
@@ -31,63 +24,34 @@ html, body {
   display: flex;
   align-items: center;
   gap: 10px;
-
-  background: linear-gradient(
-    135deg,
-    rgba(0,33,71,0.95),
-    rgba(0,74,173,0.95)
-  );
-  backdrop-filter: blur(10px);
-
+  background: linear-gradient(135deg, rgba(0,33,71,.95), rgba(0,74,173,.95));
   border-radius: 30px;
   cursor: pointer;
   z-index: 9999;
-
-  box-shadow:
-    0 0 18px rgba(0, 110, 255, 0.55),
-    inset 0 0 8px rgba(255,255,255,0.15);
-
-  transition: transform 0.25s ease,
-              box-shadow 0.25s ease;
+  box-shadow: 0 0 18px rgba(0,110,255,.55);
   animation: aiFloat 4s ease-in-out infinite;
 }
 
-.ai-pill-horizontal:hover {
-  transform: translateY(-4px) scale(1.03);
-  box-shadow:
-    0 0 30px rgba(0, 140, 255, 0.85),
-    inset 0 0 10px rgba(255,255,255,0.25);
+@keyframes aiFloat {
+  0%,100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
 }
 
-/* AI icon container */
 .ai-icon {
   width: 34px;
   height: 34px;
   border-radius: 50%;
   display: grid;
   place-items: center;
-
-  background: rgba(255,255,255,0.12);
-  box-shadow: inset 0 0 6px rgba(255,255,255,0.25);
+  background: rgba(255,255,255,.15);
 }
 
-/* Text */
 .ai-label {
-  color: #ffffff;
-  font-size: 14px;
+  color: white;
   font-weight: 600;
-  letter-spacing: 0.4px;
-  white-space: nowrap;
-  user-select: none;
 }
 
-/* Floating animation */
-@keyframes aiFloat {
-  0%, 100% { transform: translateY(0); }
-  50% { transform: translateY(-6px); }
-}
-
-/* Chat window */
+/* Chat Window */
 #chatbox {
   position: fixed;
   bottom: 100px;
@@ -96,26 +60,38 @@ html, body {
   height: 460px;
   display: none;
   flex-direction: column;
+  background: rgba(255,255,255,.92);
   backdrop-filter: blur(14px);
-  background: rgba(255,255,255,.9);
   border-radius: 16px;
   z-index: 9999;
   box-shadow: 0 0 30px rgba(0,0,0,.4);
-  animation: pop 0.3s ease;
 }
 
-@keyframes pop {
-  from { opacity: 0; transform: scale(.9); }
-  to { opacity: 1; transform: scale(1); }
-}
-
+/* Header */
 #chat-header {
   background: linear-gradient(90deg,#002147,#004aad);
   color: white;
-  padding: 12px;
-  border-radius: 16px 16px 0 0;
+  padding: 10px;
   display: flex;
+  align-items: center;
   justify-content: space-between;
+  gap: 6px;
+  border-radius: 16px 16px 0 0;
+}
+
+/* Translate tweak */
+#google_translate_element {
+  transform: scale(0.8);
+}
+
+.goog-te-gadget {
+  color: white !important;
+}
+
+.goog-te-gadget select {
+  background: #ffffff;
+  border-radius: 6px;
+  padding: 2px;
 }
 
 /* Messages */
@@ -130,12 +106,6 @@ html, body {
   margin-bottom: 10px;
   padding: 10px 14px;
   border-radius: 14px;
-  animation: slide 0.25s ease;
-}
-
-@keyframes slide {
-  from { opacity: 0; transform: translateY(6px); }
-  to { opacity: 1; transform: translateY(0); }
 }
 
 .user {
@@ -154,7 +124,6 @@ html, body {
   display: flex;
   gap: 6px;
   margin-top: 8px;
-  flex-wrap: wrap;
 }
 
 .link-wrap button {
@@ -164,12 +133,10 @@ html, body {
   padding: 6px 10px;
   border-radius: 8px;
   cursor: pointer;
-  transition: .2s;
 }
 
 .link-wrap button:hover {
   background: #004aad;
-  transform: translateY(-2px);
 }
 
 /* Input */
@@ -199,23 +166,8 @@ html, body {
 .typing {
   padding: 8px 14px;
   font-size: 13px;
-  color: #555;
 }
 
-.typing span {
-  animation: blink 1.4s infinite both;
+.hidden {
+  display: none;
 }
-
-.typing span:nth-child(2) { animation-delay: .2s; }
-.typing span:nth-child(3) { animation-delay: .4s; }
-
-@keyframes blink {
-  0% { opacity: .2 }
-  20% { opacity: 1 }
-  100% { opacity: .2 }
-}
-
-.hidden { display: none; }
-
-
-
