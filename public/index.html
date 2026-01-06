@@ -2,163 +2,57 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>MIT FGC AI Assistant</title>
-
-  <!-- Viewport -->
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-
-  <!-- Main stylesheet (we will write FULL CSS next) -->
+  <title>MIT FGC AI Assistant</title>
   <link rel="stylesheet" href="style.css" />
 </head>
 
 <body>
 
-  <!-- ======================================================
-       BACKGROUND: OFFICIAL COLLEGE WEBSITE (READ-ONLY)
-       ====================================================== -->
-  <iframe
-    id="college-site"
-    src="https://mitfgc.in"
-    title="MIT First Grade College Website"
-    loading="lazy"
-  ></iframe>
+<!-- REAL COLLEGE WEBSITE BACKGROUND -->
+<iframe
+  src="https://mitfgc.in"
+  id="college-site"
+  title="MIT First Grade College Website">
+</iframe>
 
-  <!-- ======================================================
-       FLOATING CHATBOT TRIGGER (ASK MIT AI)
-       ====================================================== -->
-  <div id="chat-toggle" class="ai-pill-horizontal" role="button" aria-label="Open MIT AI Chatbot">
+<!-- CHAT TOGGLE BUTTON -->
+<div id="chat-toggle" class="ai-pill-horizontal">
+  <div class="ai-icon">
+    <!-- AI SVG ICON -->
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
+      <path d="M12 2a4 4 0 0 0-4 4v1H7a3 3 0 0 0 0 6h1v1a4 4 0 0 0 8 0v-1h1a3 3 0 0 0 0-6h-1V6a4 4 0 0 0-4-4Z"
+        stroke="white" stroke-width="1.6"/>
+      <circle cx="10" cy="11" r="1" fill="white"/>
+      <circle cx="14" cy="11" r="1" fill="white"/>
+    </svg>
+  </div>
+  <span class="ai-label">Ask MIT AI</span>
+</div>
 
-    <!-- AI Logo (PURE CSS later) -->
-    <div class="ai-icon" aria-hidden="true"></div>
 
-    <!-- Label -->
-    <span
-      class="ai-label"
-      data-i18n="ask_ai"
-    >
-      Ask MIT AI
-    </span>
 
+<!-- CHAT WINDOW -->
+<div id="chatbox">
+  <div id="chat-header">
+    <span>MIT FGC AI Assistant</span>
+    <span id="close-chat">✖</span>
   </div>
 
-  <!-- ======================================================
-       CHATBOT CONTAINER
-       ====================================================== -->
-  <div id="chatbox" aria-live="polite">
+  <div id="messages"></div>
 
-    <!-- =====================
-         CHAT HEADER
-         ===================== -->
-    <div id="chat-header">
-
-      <!-- Title -->
-      <div class="chat-title">
-        <span data-i18n="chat_title">MIT FGC AI</span>
-      </div>
-
-      <!-- Language Selector -->
-      <div class="chat-language">
-        <select id="chat-lang" aria-label="Select language">
-          <option value="en">English</option>
-          <option value="kn">ಕನ್ನಡ</option>
-          <option value="hi">हिन्दी</option>
-          <option value="ta">தமிழ்</option>
-          <option value="te">తెలుగు</option>
-          <option value="ml">മലയാളം</option>
-        </select>
-      </div>
-
-      <!-- Close Button -->
-      <button
-        id="close-chat"
-        aria-label="Close chatbot"
-        title="Close"
-      >
-        ✕
-      </button>
-
-    </div>
-
-    <!-- =====================
-         CHAT BODY (MESSAGES)
-         ===================== -->
-    <div id="messages">
-
-      <!-- BOT GREETING (STATIC, WILL TRANSLATE VIA JS LATER) -->
-      <div class="message bot">
-
-        <div class="message-text" data-i18n="greeting">
-          Hello 👋 I’m the MIT First Grade College chatbot.
-          You can ask about admissions, courses, eligibility,
-          faculty, campus life, or anything related to studies.
-        </div>
-
-        <!-- QUICK ACTION BUTTONS -->
-        <div class="quick-actions">
-
-          <button
-            class="quick-btn"
-            data-action="admissions"
-            data-i18n="admissions"
-          >
-            Admissions
-          </button>
-
-          <button
-            class="quick-btn"
-            data-action="courses"
-            data-i18n="courses"
-          >
-            Courses
-          </button>
-
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- =====================
-         TYPING INDICATOR
-         ===================== -->
-    <div
-      id="typing-indicator"
-      class="typing hidden"
-      data-i18n="typing"
-    >
-      AI is thinking…
-    </div>
-
-    <!-- =====================
-         CHAT INPUT AREA
-         ===================== -->
-    <div id="chat-input">
-
-      <input
-        id="input"
-        type="text"
-        autocomplete="off"
-        placeholder="Ask about admissions, courses, campus life…"
-        data-i18n-placeholder="input_placeholder"
-        aria-label="Chat input"
-      />
-
-      <button
-        id="send-btn"
-        aria-label="Send message"
-        title="Send"
-      >
-        ➤
-      </button>
-
-    </div>
-
+  <div id="typing-indicator" class="typing hidden">
+    AI is thinking<span>.</span><span>.</span><span>.</span>
   </div>
 
-  <!-- ======================================================
-       MAIN SCRIPT (we will write FULL JS next)
-       ====================================================== -->
-  <script src="script.js"></script>
+  <div id="chat-input">
+    <input id="input" placeholder="Ask about admissions, courses, campus life..." />
+    <button id="send-btn">➤</button>
+  </div>
+</div>
 
+<script src="script.js"></script>
 </body>
 </html>
+
+

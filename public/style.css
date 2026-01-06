@@ -1,26 +1,10 @@
-/* =========================================================
-   GLOBAL RESET & BASE
-========================================================= */
-
-*,
-*::before,
-*::after {
-  box-sizing: border-box;
-}
-
-html,
-body {
+html, body {
   margin: 0;
-  padding: 0;
   height: 100%;
-  font-family: "Segoe UI", system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-  background: #000;
+  font-family: "Segoe UI", sans-serif;
 }
 
-/* =========================================================
-   BACKGROUND OFFICIAL WEBSITE
-========================================================= */
-
+/* Background iframe */
 #college-site {
   position: fixed;
   inset: 0;
@@ -30,321 +14,208 @@ body {
   z-index: 1;
 }
 
-/* =========================================================
-   FLOATING ASK MIT AI BUTTON
-========================================================= */
+/* ===============================
+   FUTURISTIC FLOATING AI BUTTON
+================================ */
+
+/* ===============================
+   HORIZONTAL AI PILL BUTTON
+================================ */
 
 .ai-pill-horizontal {
   position: fixed;
   right: 24px;
   bottom: 24px;
-
-  height: 54px;
+  height: 52px;
   padding: 0 18px 0 14px;
-
   display: flex;
   align-items: center;
-  gap: 12px;
+  gap: 10px;
 
   background: linear-gradient(
     135deg,
-    rgba(0, 33, 71, 0.96),
-    rgba(0, 74, 173, 0.96)
+    rgba(0,33,71,0.95),
+    rgba(0,74,173,0.95)
   );
+  backdrop-filter: blur(10px);
 
-  border-radius: 32px;
+  border-radius: 30px;
   cursor: pointer;
   z-index: 9999;
 
   box-shadow:
     0 0 18px rgba(0, 110, 255, 0.55),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.15);
+    inset 0 0 8px rgba(255,255,255,0.15);
 
+  transition: transform 0.25s ease,
+              box-shadow 0.25s ease;
   animation: aiFloat 4s ease-in-out infinite;
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
 .ai-pill-horizontal:hover {
-  transform: translateY(-2px);
+  transform: translateY(-4px) scale(1.03);
   box-shadow:
-    0 0 26px rgba(0, 140, 255, 0.75),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.25);
+    0 0 30px rgba(0, 140, 255, 0.85),
+    inset 0 0 10px rgba(255,255,255,0.25);
 }
 
-/* Floating animation */
-@keyframes aiFloat {
-  0%   { transform: translateY(0); }
-  50%  { transform: translateY(-6px); }
-  100% { transform: translateY(0); }
-}
-
-/* =========================================================
-   CSS-ONLY AI LOGO
-========================================================= */
-
+/* AI icon container */
 .ai-icon {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  position: relative;
+  display: grid;
+  place-items: center;
 
-  background:
-    radial-gradient(circle at 30% 30%, #9fd0ff, #004aad 70%);
-
-  box-shadow:
-    0 0 10px rgba(120, 190, 255, 0.8),
-    inset 0 0 8px rgba(255, 255, 255, 0.35);
+  background: rgba(255,255,255,0.12);
+  box-shadow: inset 0 0 6px rgba(255,255,255,0.25);
 }
 
-/* Neural dots */
-.ai-icon::before,
-.ai-icon::after {
-  content: "";
-  position: absolute;
-  inset: 6px;
-  border-radius: 50%;
-  border: 1px dashed rgba(255, 255, 255, 0.5);
-  animation: spin 6s linear infinite;
-}
-
-.ai-icon::after {
-  inset: 10px;
-  animation-duration: 10s;
-}
-
-@keyframes spin {
-  from { transform: rotate(0deg); }
-  to   { transform: rotate(360deg); }
-}
-
+/* Text */
 .ai-label {
   color: #ffffff;
-  font-weight: 600;
   font-size: 14px;
-  letter-spacing: 0.2px;
+  font-weight: 600;
+  letter-spacing: 0.4px;
+  white-space: nowrap;
+  user-select: none;
 }
 
-/* =========================================================
-   CHAT WINDOW CONTAINER
-========================================================= */
+/* Floating animation */
+@keyframes aiFloat {
+  0%, 100% { transform: translateY(0); }
+  50% { transform: translateY(-6px); }
+}
 
+/* Chat window */
 #chatbox {
   position: fixed;
+  bottom: 100px;
   right: 24px;
-  bottom: 96px;
-
   width: 360px;
-  height: 470px;
-
+  height: 460px;
   display: none;
   flex-direction: column;
-
-  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(14px);
-
-  border-radius: 18px;
+  background: rgba(255,255,255,.9);
+  border-radius: 16px;
   z-index: 9999;
-
-  box-shadow:
-    0 0 36px rgba(0, 0, 0, 0.45),
-    inset 0 0 0 1px rgba(255, 255, 255, 0.4);
-
-  overflow: hidden;
+  box-shadow: 0 0 30px rgba(0,0,0,.4);
+  animation: pop 0.3s ease;
 }
 
-/* =========================================================
-   CHAT HEADER
-========================================================= */
+@keyframes pop {
+  from { opacity: 0; transform: scale(.9); }
+  to { opacity: 1; transform: scale(1); }
+}
 
 #chat-header {
+  background: linear-gradient(90deg,#002147,#004aad);
+  color: white;
+  padding: 12px;
+  border-radius: 16px 16px 0 0;
   display: flex;
-  align-items: center;
-  gap: 8px;
-
-  padding: 10px 12px;
-
-  background: linear-gradient(90deg, #002147, #004aad);
-  color: #ffffff;
-
-  border-radius: 18px 18px 0 0;
+  justify-content: space-between;
 }
 
-.chat-title {
-  font-weight: 600;
-  font-size: 14px;
-  flex: 1;
-}
-
-/* Language selector */
-.chat-language select {
-  background: rgba(255, 255, 255, 0.15);
-  color: #ffffff;
-
-  border: 1px solid rgba(255, 255, 255, 0.3);
-  border-radius: 8px;
-
-  padding: 4px 8px;
-  font-size: 12px;
-  outline: none;
-  cursor: pointer;
-}
-
-.chat-language select option {
-  color: #000;
-}
-
-/* Close button */
-#close-chat {
-  background: transparent;
-  border: none;
-  color: #ffffff;
-  font-size: 18px;
-  cursor: pointer;
-  padding: 2px 6px;
-}
-
-/* =========================================================
-   MESSAGES AREA
-========================================================= */
-
+/* Messages */
 #messages {
   flex: 1;
-  padding: 14px;
+  padding: 12px;
   overflow-y: auto;
 }
 
-/* Scrollbar (optional polish) */
-#messages::-webkit-scrollbar {
-  width: 6px;
-}
-
-#messages::-webkit-scrollbar-thumb {
-  background: rgba(0, 0, 0, 0.2);
-  border-radius: 3px;
-}
-
-/* =========================================================
-   MESSAGE BUBBLES
-========================================================= */
-
 .message {
   max-width: 85%;
-  margin-bottom: 12px;
+  margin-bottom: 10px;
   padding: 10px 14px;
-  border-radius: 16px;
-  font-size: 13.5px;
-  line-height: 1.4;
+  border-radius: 14px;
+  animation: slide 0.25s ease;
 }
 
-/* Bot message */
-.message.bot {
-  background: #f1f1f1;
-  color: #222;
-  align-self: flex-start;
+@keyframes slide {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
 }
 
-/* User message */
-.message.user {
+.user {
   background: #002147;
-  color: #ffffff;
+  color: white;
   align-self: flex-end;
 }
 
-/* =========================================================
-   QUICK ACTION BUTTONS
-========================================================= */
+.bot {
+  background: #f1f1f1;
+  color: #222;
+}
 
-.quick-actions {
+/* Buttons */
+.link-wrap {
   display: flex;
   gap: 6px;
   margin-top: 8px;
+  flex-wrap: wrap;
 }
 
-.quick-btn {
+.link-wrap button {
   background: #002147;
-  color: #ffffff;
-
+  color: white;
   border: none;
+  padding: 6px 10px;
   border-radius: 8px;
-
-  padding: 4px 10px;
-  font-size: 12px;
   cursor: pointer;
+  transition: .2s;
 }
 
-.quick-btn:hover {
+.link-wrap button:hover {
   background: #004aad;
+  transform: translateY(-2px);
 }
 
-/* =========================================================
-   TYPING INDICATOR
-========================================================= */
-
-.typing {
-  padding: 8px 14px;
-  font-size: 12px;
-  color: #555;
-}
-
-.hidden {
-  display: none;
-}
-
-/* =========================================================
-   INPUT AREA
-========================================================= */
-
+/* Input */
 #chat-input {
   display: flex;
-  align-items: center;
-  gap: 6px;
-
   padding: 10px;
-  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  gap: 6px;
 }
 
 #input {
   flex: 1;
-  padding: 8px 10px;
-
-  border-radius: 10px;
+  padding: 8px;
+  border-radius: 8px;
   border: 1px solid #ccc;
-
-  font-size: 13px;
-  outline: none;
 }
 
 #send-btn {
-  width: 38px;
-  height: 38px;
-
-  border-radius: 10px;
-  border: none;
-
   background: #002147;
-  color: #ffffff;
-
-  font-size: 18px;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 0 14px;
   cursor: pointer;
 }
 
-#send-btn:hover {
-  background: #004aad;
+/* Typing */
+.typing {
+  padding: 8px 14px;
+  font-size: 13px;
+  color: #555;
 }
 
-/* =========================================================
-   MOBILE SAFETY
-========================================================= */
-
-@media (max-width: 480px) {
-  #chatbox {
-    width: calc(100% - 24px);
-    right: 12px;
-    bottom: 80px;
-  }
-
-  .ai-pill-horizontal {
-    right: 12px;
-    bottom: 12px;
-  }
+.typing span {
+  animation: blink 1.4s infinite both;
 }
+
+.typing span:nth-child(2) { animation-delay: .2s; }
+.typing span:nth-child(3) { animation-delay: .4s; }
+
+@keyframes blink {
+  0% { opacity: .2 }
+  20% { opacity: 1 }
+  100% { opacity: .2 }
+}
+
+.hidden { display: none; }
+
+
+
