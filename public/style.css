@@ -207,4 +207,21 @@ html, body {
   color: #000;
 }
 
+/* ===============================
+   HIDE GOOGLE TRANSLATE BANNER
+================================ */
+
+.goog-te-banner-frame.skiptranslate {
+  display: none !important;
+}
+
+body {
+  top: 0 !important;
+}
+
+/* Also hide the small tooltip */
+.goog-tooltip {
+  display: none !important;
+}
+
 
