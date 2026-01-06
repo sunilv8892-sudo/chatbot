@@ -9,37 +9,36 @@
 
 <body>
 
-<!-- REAL COLLEGE WEBSITE BACKGROUND -->
+<!-- Background official site -->
 <iframe
   src="https://mitfgc.in"
   id="college-site"
   title="MIT First Grade College Website">
 </iframe>
 
-<!-- CHAT TOGGLE BUTTON -->
+<!-- Floating AI Button -->
 <div id="chat-toggle" class="ai-pill-horizontal">
-  <div class="ai-icon">
-    <svg width="20" height="20" viewBox="0 0 24 24" fill="none">
-      <path d="M12 2a4 4 0 0 0-4 4v1H7a3 3 0 0 0 0 6h1v1a4 4 0 0 0 8 0v-1h1a3 3 0 0 0 0-6h-1V6a4 4 0 0 0-4-4Z"
-        stroke="white" stroke-width="1.6"/>
-      <circle cx="10" cy="11" r="1" fill="white"/>
-      <circle cx="14" cy="11" r="1" fill="white"/>
-    </svg>
-  </div>
+  <div class="ai-icon">🤖</div>
   <span class="ai-label">Ask MIT AI</span>
 </div>
 
-<!-- CHAT WINDOW -->
+<!-- Chatbox -->
 <div id="chatbox">
   <div id="chat-header">
     <span>MIT FGC AI Assistant</span>
 
-    <!-- GOOGLE TRANSLATE INSIDE CHAT -->
-   <div id="lang-toggle" title="Change language">
-  🌐
-</div>
-
-<div id="google_translate_element" class="gt-hidden"></div>
+    <!-- Language selector -->
+    <div class="lang-box">
+      <select id="lang-select">
+        <option value="">Change language</option>
+        <option value="en">English</option>
+        <option value="kn">ಕನ್ನಡ</option>
+        <option value="hi">हिन्दी</option>
+        <option value="ta">தமிழ்</option>
+        <option value="te">తెలుగు</option>
+        <option value="ml">മലയാളം</option>
+      </select>
+    </div>
 
     <span id="close-chat">✖</span>
   </div>
@@ -47,7 +46,7 @@
   <div id="messages"></div>
 
   <div id="typing-indicator" class="typing hidden">
-    AI is thinking<span>.</span><span>.</span><span>.</span>
+    AI is thinking...
   </div>
 
   <div id="chat-input">
@@ -56,16 +55,18 @@
   </div>
 </div>
 
+<!-- Hidden Google Translate -->
+<div id="google_translate_element" class="gt-hidden"></div>
+
 <script src="script.js"></script>
 
-<!-- GOOGLE TRANSLATE SCRIPT -->
+<!-- Google Translate -->
 <script>
 function googleTranslateElementInit() {
   new google.translate.TranslateElement(
     {
       pageLanguage: 'en',
-      includedLanguages: 'en,kn,hi,ta,te,ml',
-      layout: google.translate.TranslateElement.InlineLayout.SIMPLE
+      includedLanguages: 'en,kn,hi,ta,te,ml'
     },
     'google_translate_element'
   );
@@ -76,4 +77,3 @@ function googleTranslateElementInit() {
 
 </body>
 </html>
-
