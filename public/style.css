@@ -183,27 +183,28 @@ html, body {
   pointer-events: none;
 }
 
-/* Language icon matching AI theme */
-#lang-toggle {
-  width: 34px;
-  height: 34px;
-  border-radius: 50%;
-  display: grid;
-  place-items: center;
+/* ===============================
+   LANGUAGE TEXT BUTTON (THEMED)
+================================ */
+
+.lang-box select {
+  background: rgba(255,255,255,0.15);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.35);
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
   cursor: pointer;
-  font-size: 16px;
-  background: linear-gradient(135deg, #004aad, #002147);
-  box-shadow: 0 0 8px rgba(0,110,255,.6);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  outline: none;
 }
 
-#lang-toggle:hover {
-  transform: scale(1.08);
-  box-shadow: 0 0 12px rgba(0,110,255,.9);
+.lang-box select:hover {
+  background: rgba(255,255,255,0.25);
 }
 
-/* Minimize Google branding (do not fully remove) */
-.goog-logo-link,
-.goog-te-gadget span {
-  display: none !important;
+.lang-box option {
+  color: #000;
 }
+
+
