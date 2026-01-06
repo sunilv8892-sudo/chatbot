@@ -1,23 +1,10 @@
-/* ===============================
-   BASE
-================================ */
-
 html, body {
   margin: 0;
   height: 100%;
   font-family: "Segoe UI", sans-serif;
 }
 
-/* Prevent Google from shifting page */
-body,
-html {
-  top: 0 !important;
-}
-
-/* ===============================
-   BACKGROUND IFRAME
-================================ */
-
+/* Background iframe */
 #college-site {
   position: fixed;
   inset: 0;
@@ -27,10 +14,7 @@ html {
   z-index: 1;
 }
 
-/* ===============================
-   FLOATING AI BUTTON
-================================ */
-
+/* Floating AI Button */
 .ai-pill-horizontal {
   position: fixed;
   right: 24px;
@@ -46,7 +30,6 @@ html {
   z-index: 9999;
   box-shadow: 0 0 18px rgba(0,110,255,.55);
   animation: aiFloat 4s ease-in-out infinite;
-  translate: no;
 }
 
 @keyframes aiFloat {
@@ -58,21 +41,15 @@ html {
   width: 34px;
   height: 34px;
   border-radius: 50%;
-  display: grid;
-  place-items: center;
-  background: rgba(255,255,255,.15);
+  background: rgba(255,255,255,.2);
 }
 
 .ai-label {
   color: white;
   font-weight: 600;
-  translate: no;
 }
 
-/* ===============================
-   CHAT WINDOW
-================================ */
-
+/* Chat Window */
 #chatbox {
   position: fixed;
   bottom: 100px;
@@ -88,10 +65,7 @@ html {
   box-shadow: 0 0 30px rgba(0,0,0,.4);
 }
 
-/* ===============================
-   HEADER
-================================ */
-
+/* Header */
 #chat-header {
   background: linear-gradient(90deg,#002147,#004aad);
   color: white;
@@ -101,38 +75,23 @@ html {
   justify-content: space-between;
   gap: 8px;
   border-radius: 16px 16px 0 0;
-  translate: no;
 }
 
-/* ===============================
-   LANGUAGE SELECTOR
-================================ */
-
-.lang-box select {
-  background: rgba(255,255,255,0.15);
+/* Language selector */
+#chat-lang {
+  background: rgba(255,255,255,.15);
   color: white;
-  border: 1px solid rgba(255,255,255,0.35);
-  padding: 6px 10px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  outline: none;
-  translate: no;
+  border: 1px solid rgba(255,255,255,.3);
+  border-radius: 8px;
+  padding: 4px 8px;
+  font-size: 12px;
 }
 
-.lang-box select:hover {
-  background: rgba(255,255,255,0.25);
+#chat-lang option {
+  color: black;
 }
 
-.lang-box option {
-  color: #000;
-}
-
-/* ===============================
-   MESSAGES
-================================ */
-
+/* Messages */
 #messages {
   flex: 1;
   padding: 12px;
@@ -157,34 +116,7 @@ html {
   color: #222;
 }
 
-/* ===============================
-   LINKS / BUTTONS
-================================ */
-
-.link-wrap {
-  display: flex;
-  gap: 6px;
-  margin-top: 8px;
-}
-
-.link-wrap button {
-  background: #002147;
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 8px;
-  cursor: pointer;
-  translate: no;
-}
-
-.link-wrap button:hover {
-  background: #004aad;
-}
-
-/* ===============================
-   INPUT AREA
-================================ */
-
+/* Input */
 #chat-input {
   display: flex;
   padding: 10px;
@@ -196,29 +128,23 @@ html {
   padding: 8px;
   border-radius: 8px;
   border: 1px solid #ccc;
-  translate: no;
 }
 
 #send-btn {
   background: #002147;
-  color: white;
   border: none;
   border-radius: 8px;
   padding: 0 14px;
   cursor: pointer;
-  translate: no;
 }
 
-/* Lock send icon via CSS (never translated) */
 #send-btn::before {
   content: "➤";
+  color: white;
   font-size: 18px;
 }
 
-/* ===============================
-   TYPING INDICATOR
-================================ */
-
+/* Typing */
 .typing {
   padding: 8px 14px;
   font-size: 13px;
@@ -226,39 +152,4 @@ html {
 
 .hidden {
   display: none;
-}
-
-/* ===============================
-   GOOGLE TRANSLATE CONTROL
-================================ */
-
-/* Hide widget */
-.gt-hidden {
-  position: absolute;
-  opacity: 0;
-  pointer-events: none;
-}
-
-/* Hide top banner */
-.goog-te-banner-frame.skiptranslate {
-  display: none !important;
-}
-
-/* Prevent page jump */
-.goog-te-banner-frame {
-  display: none !important;
-}
-
-.goog-tooltip,
-.goog-tooltip:hover,
-.goog-text-highlight,
-.goog-te-balloon-frame,
-.goog-te-spinner-pos {
-  display: none !important;
-}
-
-/* Minimize branding (cannot fully remove legally) */
-.goog-logo-link,
-.goog-te-gadget span {
-  display: none !important;
 }
