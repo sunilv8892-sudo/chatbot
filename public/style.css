@@ -1,10 +1,23 @@
+/* ===============================
+   BASE
+================================ */
+
 html, body {
   margin: 0;
   height: 100%;
   font-family: "Segoe UI", sans-serif;
 }
 
-/* Background iframe */
+/* Prevent Google from shifting page */
+body,
+html {
+  top: 0 !important;
+}
+
+/* ===============================
+   BACKGROUND IFRAME
+================================ */
+
 #college-site {
   position: fixed;
   inset: 0;
@@ -14,7 +27,10 @@ html, body {
   z-index: 1;
 }
 
-/* Floating AI Button */
+/* ===============================
+   FLOATING AI BUTTON
+================================ */
+
 .ai-pill-horizontal {
   position: fixed;
   right: 24px;
@@ -30,6 +46,7 @@ html, body {
   z-index: 9999;
   box-shadow: 0 0 18px rgba(0,110,255,.55);
   animation: aiFloat 4s ease-in-out infinite;
+  translate: no;
 }
 
 @keyframes aiFloat {
@@ -49,9 +66,13 @@ html, body {
 .ai-label {
   color: white;
   font-weight: 600;
+  translate: no;
 }
 
-/* Chat Window */
+/* ===============================
+   CHAT WINDOW
+================================ */
+
 #chatbox {
   position: fixed;
   bottom: 100px;
@@ -67,7 +88,10 @@ html, body {
   box-shadow: 0 0 30px rgba(0,0,0,.4);
 }
 
-/* Header */
+/* ===============================
+   HEADER
+================================ */
+
 #chat-header {
   background: linear-gradient(90deg,#002147,#004aad);
   color: white;
@@ -75,26 +99,40 @@ html, body {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  gap: 6px;
+  gap: 8px;
   border-radius: 16px 16px 0 0;
+  translate: no;
 }
 
-/* Translate tweak */
-#google_translate_element {
-  transform: scale(0.8);
+/* ===============================
+   LANGUAGE SELECTOR
+================================ */
+
+.lang-box select {
+  background: rgba(255,255,255,0.15);
+  color: white;
+  border: 1px solid rgba(255,255,255,0.35);
+  padding: 6px 10px;
+  border-radius: 10px;
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+  translate: no;
 }
 
-.goog-te-gadget {
-  color: white !important;
+.lang-box select:hover {
+  background: rgba(255,255,255,0.25);
 }
 
-.goog-te-gadget select {
-  background: #ffffff;
-  border-radius: 6px;
-  padding: 2px;
+.lang-box option {
+  color: #000;
 }
 
-/* Messages */
+/* ===============================
+   MESSAGES
+================================ */
+
 #messages {
   flex: 1;
   padding: 12px;
@@ -119,7 +157,10 @@ html, body {
   color: #222;
 }
 
-/* Buttons */
+/* ===============================
+   LINKS / BUTTONS
+================================ */
+
 .link-wrap {
   display: flex;
   gap: 6px;
@@ -133,13 +174,17 @@ html, body {
   padding: 6px 10px;
   border-radius: 8px;
   cursor: pointer;
+  translate: no;
 }
 
 .link-wrap button:hover {
   background: #004aad;
 }
 
-/* Input */
+/* ===============================
+   INPUT AREA
+================================ */
+
 #chat-input {
   display: flex;
   padding: 10px;
@@ -151,6 +196,7 @@ html, body {
   padding: 8px;
   border-radius: 8px;
   border: 1px solid #ccc;
+  translate: no;
 }
 
 #send-btn {
@@ -160,9 +206,19 @@ html, body {
   border-radius: 8px;
   padding: 0 14px;
   cursor: pointer;
+  translate: no;
 }
 
-/* Typing */
+/* Lock send icon via CSS (never translated) */
+#send-btn::before {
+  content: "➤";
+  font-size: 18px;
+}
+
+/* ===============================
+   TYPING INDICATOR
+================================ */
+
 .typing {
   padding: 8px 14px;
   font-size: 13px;
@@ -173,59 +229,36 @@ html, body {
 }
 
 /* ===============================
-   GOOGLE TRANSLATE CUSTOM UI
+   GOOGLE TRANSLATE CONTROL
 ================================ */
 
-/* Hide default Google UI */
+/* Hide widget */
 .gt-hidden {
   position: absolute;
   opacity: 0;
   pointer-events: none;
 }
 
-/* ===============================
-   LANGUAGE TEXT BUTTON (THEMED)
-================================ */
-
-.lang-box select {
-  background: rgba(255,255,255,0.15);
-  color: white;
-  border: 1px solid rgba(255,255,255,0.35);
-  padding: 6px 10px;
-  border-radius: 10px;
-  font-size: 13px;
-  font-weight: 500;
-  cursor: pointer;
-  outline: none;
-}
-
-.lang-box select:hover {
-  background: rgba(255,255,255,0.25);
-}
-
-.lang-box option {
-  color: #000;
-}
-
-/* ===============================
-   HIDE GOOGLE TRANSLATE BANNER
-================================ */
-
+/* Hide top banner */
 .goog-te-banner-frame.skiptranslate {
   display: none !important;
 }
 
-body {
-  top: 0 !important;
-}
-
-/* Also hide the small tooltip */
-.goog-tooltip {
+/* Prevent page jump */
+.goog-te-banner-frame {
   display: none !important;
 }
 
-html {
-  margin-top: 0 !important;
+.goog-tooltip,
+.goog-tooltip:hover,
+.goog-text-highlight,
+.goog-te-balloon-frame,
+.goog-te-spinner-pos {
+  display: none !important;
 }
 
-
+/* Minimize branding (cannot fully remove legally) */
+.goog-logo-link,
+.goog-te-gadget span {
+  display: none !important;
+}
