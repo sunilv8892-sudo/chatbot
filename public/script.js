@@ -1,4 +1,14 @@
 document.addEventListener("DOMContentLoaded", () => {
+  const langBtn = document.getElementById("lang-toggle");
+
+if (langBtn) {
+  langBtn.onclick = () => {
+    const frame = document.querySelector("iframe.goog-te-menu-frame");
+    if (frame) {
+      frame.contentWindow.document.body.click();
+    }
+  };
+}
   const toggle = document.getElementById("chat-toggle");
   const chatbox = document.getElementById("chatbox");
   const closeBtn = document.getElementById("close-chat");
@@ -71,3 +81,4 @@ document.addEventListener("DOMContentLoaded", () => {
     messages.scrollTop = messages.scrollHeight;
   }
 });
+
