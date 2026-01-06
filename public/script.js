@@ -1,14 +1,18 @@
 document.addEventListener("DOMContentLoaded", () => {
-  const langBtn = document.getElementById("lang-toggle");
 
-if (langBtn) {
-  langBtn.onclick = () => {
-    const frame = document.querySelector("iframe.goog-te-menu-frame");
-    if (frame) {
-      frame.contentWindow.document.body.click();
-    }
-  };
-}
+  // Language selector
+  const langSelect = document.getElementById("lang-select");
+  if (langSelect) {
+    langSelect.addEventListener("change", function () {
+      const lang = this.value;
+      if (!lang) return;
+
+      document.cookie = `googtrans=/en/${lang};path=/`;
+      document.cookie = `googtrans=/en/${lang};path=/;domain=${location.hostname}`;
+      location.reload();
+    });
+  }
+
   const toggle = document.getElementById("chat-toggle");
   const chatbox = document.getElementById("chatbox");
   const closeBtn = document.getElementById("close-chat");
@@ -80,5 +84,5 @@ if (langBtn) {
     messages.appendChild(div);
     messages.scrollTop = messages.scrollHeight;
   }
-});
 
+});
