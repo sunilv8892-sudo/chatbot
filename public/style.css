@@ -171,3 +171,39 @@ html, body {
 .hidden {
   display: none;
 }
+
+/* ===============================
+   GOOGLE TRANSLATE CUSTOM UI
+================================ */
+
+/* Hide default Google UI */
+.gt-hidden {
+  position: absolute;
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* Language icon matching AI theme */
+#lang-toggle {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  display: grid;
+  place-items: center;
+  cursor: pointer;
+  font-size: 16px;
+  background: linear-gradient(135deg, #004aad, #002147);
+  box-shadow: 0 0 8px rgba(0,110,255,.6);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#lang-toggle:hover {
+  transform: scale(1.08);
+  box-shadow: 0 0 12px rgba(0,110,255,.9);
+}
+
+/* Minimize Google branding (do not fully remove) */
+.goog-logo-link,
+.goog-te-gadget span {
+  display: none !important;
+}
