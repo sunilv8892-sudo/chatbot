@@ -1,18 +1,5 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-  // Language selector
-  const langSelect = document.getElementById("lang-select");
-  if (langSelect) {
-    langSelect.addEventListener("change", function () {
-      const lang = this.value;
-      if (!lang) return;
-
-      document.cookie = `googtrans=/en/${lang};path=/`;
-      document.cookie = `googtrans=/en/${lang};path=/;domain=${location.hostname}`;
-      location.reload();
-    });
-  }
-
   const toggle = document.getElementById("chat-toggle");
   const chatbox = document.getElementById("chatbox");
   const closeBtn = document.getElementById("close-chat");
@@ -20,11 +7,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const input = document.getElementById("input");
   const messages = document.getElementById("messages");
   const typing = document.getElementById("typing-indicator");
+  const langSelect = document.getElementById("chat-lang");
+
+  let selectedLang = langSelect.value;
+
+  langSelect.onchange = () => {
+    selectedLang = langSelect.value;
+  };
 
   chatbox.style.display = "none";
 
   toggle.onclick = () => {
-    chatbox.style.display = chatbox.style.display === "none" ? "flex" : "none";
+    chatbox.style.display =
+      chatbox.style.display === "none" ? "flex" : "none";
   };
 
   closeBtn.onclick = () => chatbox.style.display = "none";
@@ -43,7 +38,10 @@ document.addEventListener("DOMContentLoaded", () => {
     fetch("/api/chat", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({ message: text })
+      body: JSON.stringify({
+        message: text,
+        language: selectedLang
+      })
     })
       .then(res => res.json())
       .then(data => {
